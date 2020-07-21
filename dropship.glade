@@ -16,13 +16,13 @@
           <object class="GtkStackSwitcher">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="stack">mainStack</property>
+            <property name="stack">sendReceiveStack</property>
           </object>
         </child>
       </object>
     </child>
     <child>
-      <object class="GtkStack" id="mainStack">
+      <object class="GtkStack" id="sendReceiveStack">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -40,7 +40,7 @@
                 <property name="orientation">vertical</property>
                 <property name="homogeneous">True</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="dropLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Drag a file to send</property>
