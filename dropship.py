@@ -94,7 +94,7 @@ class DropShip:
         self._running.set_result(None)
 
     def schedule(self, function):
-        """Schedule an task."""
+        """Schedule a task on the event loop."""
         loop.call_soon_threadsafe(asyncio.ensure_future, function)
 
     async def wormhole_send(self, widget, fpath):
