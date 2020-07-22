@@ -3,27 +3,29 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 
-from gi.repository import Gdk, GLib, Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import GLib as glib
+from gi.repository import Gtk as gtk
 
 
 class Main:
     def __init__(self):
 
         # Connect to the Glade file
-        self.builder = Gtk.Builder()
+        self.builder = gtk.Builder()
         self.builder.add_from_file("dropship.glade")
         self.builder.connect_signals(self)
 
         # Connect to the Stylesheet
-        screen = Gdk.Screen.get_default()
-        provider = Gtk.CssProvider()
+        screen = gdk.Screen.get_default()
+        provider = gtk.CssProvider()
         provider.load_from_path("./dropship.css")
-        Gtk.StyleContext.add_provider_for_screen(
-            screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        gtk.StyleContext.add_provider_for_screen(
+            screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
         window = self.builder.get_object("mainWindow")
-        window.connect("delete-event", Gtk.main_quit)
+        window.connect("delete-event", gtk.main_quit)
         window.show()
 
         # self.stack = self.builder.get_object("sendReceiveStack")
@@ -33,11 +35,11 @@ class Main:
         self.files_to_send = ""
 
         # todo check the target flags, https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
-        enforce_target = Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags(4), 129)
+        enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
 
         self.dropBox = self.builder.get_object("dropBox")
         self.dropBox.drag_dest_set(
-            Gtk.DestDefaults.ALL, [enforce_target], Gdk.DragAction.COPY
+            gtk.DestDefaults.ALL, [enforce_target], gdk.DragAction.COPY
         )
         self.dropBox.connect("drag-data-received", self.onDrop)
         self.dropLabel = self.builder.get_object("dropLabel")
@@ -59,4 +61,4 @@ class Main:
 
 if __name__ == "__main__":
     Main()
-    Gtk.main()
+    gtk.main()
