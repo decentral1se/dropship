@@ -18,6 +18,7 @@ asyncio.set_event_loop_policy(asyncio_glib.GLibEventLoopPolicy())
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 log = logging.getLogger("dropship")
+loop = asyncio.get_event_loop()
 
 
 class DropShip:
@@ -26,6 +27,8 @@ class DropShip:
     def __init__(self):
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
+
+        self._running = loop.create_future()
 
         self.init_glade()
         self.init_css()
@@ -51,7 +54,7 @@ class DropShip:
         """Initialise the GUI window."""
         self.main_window_id = "mainWindow"
         self.window = self.builder.get_object(self.main_window_id)
-        self.window.connect("delete-event", gtk.main_quit)
+        self.window.connect("delete-event", self.on_quit)
         self.window.show()
 
     def init_drop_box(self):
@@ -80,11 +83,16 @@ class DropShip:
             self.dropLabel.set_text("Sending..")
         self.files_to_send = files
 
+    def on_quit(self, *args, **kwargs):
+        self.window.close()
+        self._running.set_result(None)
+
 
 async def main():
     """The application entrypoint."""
-    DropShip()
+    dropship = DropShip()
+    await dropship._running
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    loop.run_until_complete(main())
