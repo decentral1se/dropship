@@ -27,21 +27,10 @@ class DropShip:
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
 
-        # Initiate the drag and drop area
-        # https://python-gtk-3-tutorial.readthedocs.io/en/latest/drag_and_drop.html
-        self.files_to_send = ""
-
-        # todo check the target flags, https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
-        self.enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
-
-        self.main_window_id = "mainWindow"
-
-        self.drop_box_id = "dropBox"
-        self.drop_box_label = "dropLabel"
-
         self.init_glade()
         self.init_css()
         self.init_drop_box()
+        self.init_window()
 
     def init_glade(self):
         """Initialise the GUI from Glade file."""
@@ -51,27 +40,38 @@ class DropShip:
 
     def init_css(self):
         """Initialise CSS injection."""
-        screen = gdk.Screen.get_default()
-        provider = gtk.CssProvider()
-        provider.load_from_path(self.CSS_FILE)
+        self.screen = gdk.Screen.get_default()
+        self.provider = gtk.CssProvider()
+        self.provider.load_from_path(self.CSS_FILE)
         gtk.StyleContext.add_provider_for_screen(
-            screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            self.screen, self.provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-    async def init_window(self):
+    def init_window(self):
         """Initialise the GUI window."""
-        window = self.builder.get_object(self.main_window_id)
-        window.connect("delete-event", gtk.main_quit)
-        window.show()
+        self.main_window_id = "mainWindow"
+        self.window = self.builder.get_object(self.main_window_id)
+        self.window.connect("delete-event", gtk.main_quit)
+        self.window.show()
 
     def init_drop_box(self):
         """Initialise the drag & drop box."""
-        self.dropBox = self.builder.get_object(self.drop_box_id)
-        self.dropBox.drag_dest_set(
+        # Initiate the drag and drop area
+        # https://python-gtk-3-tutorial.readthedocs.io/en/latest/drag_and_drop.html
+        self.files_to_send = ""
+
+        # todo check the target flags, https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
+        self.enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
+
+        self.drop_box_id = "dropBox"
+        self.drop_box_label = "dropLabel"
+
+        self.drop_box = self.builder.get_object(self.drop_box_id)
+        self.drop_box.drag_dest_set(
             gtk.DestDefaults.ALL, [self.enforce_target], gdk.DragAction.COPY
         )
-        self.dropBox.connect("drag-data-received", self.on_drop)
-        self.dropLabel = self.builder.get_object(self.drop_box_label)
+        self.drop_box.connect("drag-data-received", self.on_drop)
+        self.drop_label = self.builder.get_object(self.drop_box_label)
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         files = data.get_text().split()
@@ -83,9 +83,8 @@ class DropShip:
 
 async def main():
     """The application entrypoint."""
-    dropship = DropShip()
-    await dropship.init_window()
+    DropShip()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
