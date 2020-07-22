@@ -92,6 +92,12 @@ class DropShip:
         # enabled by https://github.com/jhenstridge/asyncio-glib/pull/7
         self._running.set_result(None)
 
+    async def wormhole_send(self, fpath):
+        """Run `wormhole send` on a local file path."""
+        log.info("Pretending to start wormhole send...")
+        await asyncio.sleep(2)
+        log.info("Pretending to finish wormhole send...")
+
 
 async def main():
     """The application entrypoint."""
