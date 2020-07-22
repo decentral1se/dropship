@@ -112,6 +112,7 @@ async def main():
 
 if __name__ == "__main__":
     try:
+        # TODO(decentral1se): also handle Ctrl-C escape from terminal
         loop.run_until_complete(main())
     finally:
         loop.close()
