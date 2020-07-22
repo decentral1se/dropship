@@ -1,6 +1,8 @@
 """Magic-Wormhole bundled up inside a PyGtk GUI."""
 
 import asyncio
+import logging
+import os
 
 import asyncio_glib
 import gi
@@ -13,6 +15,9 @@ from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
 
 asyncio.set_event_loop_policy(asyncio_glib.GLibEventLoopPolicy())
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+
+log = logging.getLogger("dropship")
 
 
 class DropShip:
