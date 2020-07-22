@@ -80,6 +80,7 @@ class DropShip:
         files = data.get_text().split()
         self.files_to_send = files
         if len(files) == 1:
+            self.schedule(self.wormhole_send(self, files[0]))
             self.drop_label.set_text("Sending..")
         else:
             log.info("Multiple file sending coming soon ™")
@@ -92,11 +93,15 @@ class DropShip:
         # enabled by https://github.com/jhenstridge/asyncio-glib/pull/7
         self._running.set_result(None)
 
-    async def wormhole_send(self, fpath):
+    def schedule(self, function):
+        """Schedule an task."""
+        loop.call_soon_threadsafe(asyncio.ensure_future, function)
+
+    async def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
-        log.info("Pretending to start wormhole send...")
+        log.info(f"Pretending to start wormhole send {fpath}")
         await asyncio.sleep(2)
-        log.info("Pretending to finish wormhole send...")
+        log.info(f"Pretending to finish wormhole send {fpath}")
 
 
 async def main():
