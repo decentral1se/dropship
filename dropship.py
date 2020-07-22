@@ -1,3 +1,8 @@
+"""Magic-Wormhole bundled up inside a PyGtk GUI."""
+
+import asyncio
+
+import asyncio_glib
 import gi
 
 gi.require_version("Gtk", "3.0")
@@ -7,58 +12,75 @@ from gi.repository import Gdk as gdk
 from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
 
+asyncio.set_event_loop_policy(asyncio_glib.GLibEventLoopPolicy())
 
-class Main:
+
+class DropShip:
+    """Drag it, drop it, ship it."""
+
     def __init__(self):
-
-        # Connect to the Glade file
-        self.builder = gtk.Builder()
-        self.builder.add_from_file("dropship.glade")
-        self.builder.connect_signals(self)
-
-        # Connect to the Stylesheet
-        screen = gdk.Screen.get_default()
-        provider = gtk.CssProvider()
-        provider.load_from_path("./dropship.css")
-        gtk.StyleContext.add_provider_for_screen(
-            screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-
-        window = self.builder.get_object("mainWindow")
-        window.connect("delete-event", gtk.main_quit)
-        window.show()
-
-        # self.stack = self.builder.get_object("sendReceiveStack")
+        self.GLADE_FILE = "dropship.glade"
+        self.CSS_FILE = "dropship.css"
 
         # Initiate the drag and drop area
         # https://python-gtk-3-tutorial.readthedocs.io/en/latest/drag_and_drop.html
         self.files_to_send = ""
 
         # todo check the target flags, https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
-        enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
+        self.enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
 
-        self.dropBox = self.builder.get_object("dropBox")
-        self.dropBox.drag_dest_set(
-            gtk.DestDefaults.ALL, [enforce_target], gdk.DragAction.COPY
+        self.main_window_id = "mainWindow"
+
+        self.drop_box_id = "dropBox"
+        self.drop_box_label = "dropLabel"
+
+        self.init_glade()
+        self.init_css()
+        self.init_drop_box()
+
+    def init_glade(self):
+        """Initialise the GUI from Glade file."""
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(self.GLADE_FILE)
+        self.builder.connect_signals(self)
+
+    def init_css(self):
+        """Initialise CSS injection."""
+        screen = gdk.Screen.get_default()
+        provider = gtk.CssProvider()
+        provider.load_from_path(self.CSS_FILE)
+        gtk.StyleContext.add_provider_for_screen(
+            screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
-        self.dropBox.connect("drag-data-received", self.onDrop)
-        self.dropLabel = self.builder.get_object("dropLabel")
 
-    def onDrop(self, widget, drag_context, x, y, data, info, time):
-        print(drag_context, x, y, data, info, time)
+    async def init_window(self):
+        """Initialise the GUI window."""
+        window = self.builder.get_object(self.main_window_id)
+        window.connect("delete-event", gtk.main_quit)
+        window.show()
+
+    def init_drop_box(self):
+        """Initialise the drag & drop box."""
+        self.dropBox = self.builder.get_object(self.drop_box_id)
+        self.dropBox.drag_dest_set(
+            gtk.DestDefaults.ALL, [self.enforce_target], gdk.DragAction.COPY
+        )
+        self.dropBox.connect("drag-data-received", self.on_drop)
+        self.dropLabel = self.builder.get_object(self.drop_box_label)
+
+    def on_drop(self, widget, drag_context, x, y, data, info, time):
         files = data.get_text().split()
-
         if len(files) == 1:
-            print(files)
+            # TODO: wormhole send that file
             self.dropLabel.set_text("Sending..")
-        elif len(files) > 1:
-            print("multiple files!")
-            print(files)
-            self.dropLabel.set_text("\n".join(files))
-
         self.files_to_send = files
 
 
+async def main():
+    """The application entrypoint."""
+    dropship = DropShip()
+    await dropship.init_window()
+
+
 if __name__ == "__main__":
-    Main()
-    gtk.main()
+    asyncio.run(main())
