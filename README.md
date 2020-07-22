@@ -2,6 +2,10 @@
 
 lets try magic wormhole with a nice interface
 
+[![Screenshot of dropship interface](https://vvvvvvaria.org/~r/dropship.png)](https://vvvvvvaria.org/~r/dropship0.1.webm)]
+
+*(click for video)*
+
 ## what is what:
 
 `dropship.py`, run this with python3
