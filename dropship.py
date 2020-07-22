@@ -85,7 +85,11 @@ class DropShip:
             log.info("Multiple file sending coming soon ™")
 
     def on_quit(self, *args, **kwargs):
+        """Quit the program."""
         self.window.close()
+
+        # Note(decentral1se): this seems to be a hack but kinda works!?
+        # enabled by https://github.com/jhenstridge/asyncio-glib/pull/7
         self._running.set_result(None)
 
 
