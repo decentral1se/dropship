@@ -3,6 +3,8 @@
 import asyncio
 import logging
 import os
+import subprocess
+from pathlib import Path
 
 import asyncio_glib
 import gi
@@ -80,7 +82,9 @@ class DropShip:
         files = data.get_text().split()
         self.files_to_send = files
         if len(files) == 1:
-            self.schedule(self.wormhole_send(self, files[0]))
+            # TODO(decentral1se): this replace seems funky!?
+            fpath = Path(files[0].replace("file://", ""))
+            self.schedule(self.wormhole_send(self, fpath))
             self.drop_label.set_text("Sending..")
         else:
             log.info("Multiple file sending coming soon ™")
@@ -99,9 +103,12 @@ class DropShip:
 
     async def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
-        log.info(f"Pretending to start wormhole send {fpath}")
-        await asyncio.sleep(2)
-        log.info(f"Pretending to finish wormhole send {fpath}")
+        process = await asyncio.create_subprocess_exec(
+            "wormhole", "send", fpath, stdout=subprocess.PIPE
+        )
+
+        async for line in process.stdout:
+            log.info(line)
 
 
 async def main():
