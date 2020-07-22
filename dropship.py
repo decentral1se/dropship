@@ -78,10 +78,11 @@ class DropShip:
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         files = data.get_text().split()
-        if len(files) == 1:
-            # TODO: wormhole send that file
-            self.dropLabel.set_text("Sending..")
         self.files_to_send = files
+        if len(files) == 1:
+            self.drop_label.set_text("Sending..")
+        else:
+            log.info("Multiple file sending coming soon ™")
 
     def on_quit(self, *args, **kwargs):
         self.window.close()
