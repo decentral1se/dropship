@@ -27,6 +27,7 @@ class DropShip:
     """Drag it, drop it, ship it."""
 
     def __init__(self):
+        """Object initialisation."""
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
 
