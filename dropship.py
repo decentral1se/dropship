@@ -5,6 +5,7 @@ import logging
 import os
 import subprocess
 from pathlib import Path
+from signal import SIGINT, SIGTERM
 
 import asyncio_glib
 import gi
@@ -142,13 +143,18 @@ class DropShip:
 
 async def main():
     """The application entrypoint."""
-    dropship = DropShip()
-    await dropship._running
+    try:
+        dropship = DropShip()
+        await dropship._running
+    except asyncio.CancelledError:
+        pass
 
 
 if __name__ == "__main__":
     try:
-        # TODO(decentral1se): also handle Ctrl-C escape from terminal
-        loop.run_until_complete(main())
+        main_task = asyncio.ensure_future(main())
+        loop.add_signal_handler(SIGINT, main_task.cancel)
+        loop.add_signal_handler(SIGTERM, main_task.cancel)
+        loop.run_until_complete(main_task)
     finally:
         loop.close()
