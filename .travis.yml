@@ -15,3 +15,12 @@ install:
 
 script:
   - pyinstaller --onefile dropship.py
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "hV6UsPOutY7AhiFEr4eDA+/KtueRz88qSotu8t5gzJ7y2JbHU621dgcoA9/Xlv9Bh8sndet5AdP7TCD/QsEbCst0ps3FKRcWBPBDSdurKLJ/cMDLqi/HYZOIM+tsyhrhq6Xcc/RSCirvRZrqH2ZWKlS+ZSXpTbcekewO9p1invSsd23dvJb/Gi0T3NaYWcAoqSp4eMsi6PEyG/7C/NkI0qBYqBhH91Wh9oAusHco9VdbT1nnoWfeEy9W0RLUmxXrZO6+m+0U4gQ8zNpZhXIDX3sWCDi5V9I9l62VgbRMZVFrKe6I4M3rJhNBkWF+HUyyaSJtCeKzIRMMGpu4tiMW5oNd3Rd1PInC4fL8clAmxa+mmRF6f+bG0lTm71EGMMA4Y9lZ0YAxNT9Nn/nC2hXeQq7dvaD8Qbn95Xg2+jJP9OaGVACzSvlTIodIfT7TaVkeEPtRef7fqLzbPdpqsoFlcZohJQQN4glbAaf+vgDgbVbtX2PkYRFseu+eQMpHlmfT6IWsZLb74hLyFUf5wO40BIhXy9lurHp1S0rLSe7j51eeLylS3R2j002Kd+iFRgY/zJkBVVByPC1nqhsN+iC0NK9duVJ8P125OJ/HEwvwEcA8Ggzg0KyHOyrZRziRwZbOOkfs+aRxMFq3L+bWsayKBt9BqpO/bp2VckPEMR/cpMk="
+  file: "dist/dropship"
+  skip_cleanup: true
+  on:
+    tags: true
