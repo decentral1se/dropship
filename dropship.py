@@ -23,6 +23,8 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 log = logging.getLogger("dropship")
 loop = asyncio.get_event_loop()
 
+AUTO_CLIP_COPY_SIZE = -1
+
 
 class PendingTransfer:
     """A wormhole send waiting for a wormhole receive."""
@@ -39,8 +41,9 @@ class DropShip:
         """Object initialisation."""
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
-
         self.DOWNLOAD_DIR = os.path.expanduser("~")
+
+        self.clipboard = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
 
         self._running = loop.create_future()
         self._pending = []
@@ -144,8 +147,11 @@ class DropShip:
 
         line = await self.read_lines(process.stderr, "wormhole receive")
         code = line.split()[-1]
+
         self.drop_label.set_selectable(True)
         self.drop_label.set_text(code)
+
+        self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
 
         self._pending.append(PendingTransfer(code))
 
