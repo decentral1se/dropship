@@ -19,10 +19,10 @@ install:
 
 script:
   - |
-    pyinstaller
+    pyinstaller \
+    --add-data "dropship.glade:." \
+    --add-data "dropship.css:." \
     --onefile dropship.py
-    --add-data "dropship.glade:."
-    --add-data "dropship.css:."
 
 deploy:
   provider: releases
