@@ -1,6 +1,6 @@
 # dropship
 
-[![Build Status](https://travis-ci.com/decentral1se/dropship.svg?branch=main)](https://travis-ci.com/decentral1se/dropship)
+[![Build Status](https://travis-ci.org/decentral1se/dropship.svg?branch=main)](https://travis-ci.org/decentral1se/dropship)
 
 lets try magic wormhole with a nice interface
 
