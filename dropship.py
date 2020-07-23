@@ -40,6 +40,8 @@ class DropShip:
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
 
+        self.DOWNLOAD_DIR = os.path.expanduser("~")
+
         self._running = loop.create_future()
         self._pending = []
 
@@ -132,7 +134,20 @@ class DropShip:
 
         self._pending.append(PendingTransfer(code))
 
-        # TODO(decentral1se): waits forever...
+        await process.wait()
+
+
+    async def wormhole_recv(self, widget, code):
+        """Run `wormhole receive` with a pending transfer code."""
+        process = await asyncio.create_subprocess_exec(
+            "wormhole",
+            "receive",
+            "--accept-file",
+            "--hide-progress",
+            code,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
         await process.wait()
 
 
