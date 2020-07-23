@@ -1,10 +1,12 @@
 # dropship
 
+[![Build Status](https://travis-ci.com/decentral1se/dropship.svg?branch=main)](https://travis-ci.com/decentral1se/dropship)
+
 lets try magic wormhole with a nice interface
 
 [![Screenshot of dropship interface](https://vvvvvvaria.org/~r/dropship.png)](https://vvvvvvaria.org/~r/dropship0.1.webm)]
 
-*(click for video)*
+_(click for video)_
 
 ## what is what:
 
