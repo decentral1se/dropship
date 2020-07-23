@@ -48,6 +48,7 @@ class DropShip:
         self.init_glade()
         self.init_css()
         self.init_drop_box()
+        self.init_recv_box()
         self.init_window()
 
     def init_glade(self):
@@ -90,7 +91,14 @@ class DropShip:
         self.drop_box.connect("drag-data-received", self.on_drop)
         self.drop_label = self.builder.get_object(self.drop_box_label)
 
+    def init_recv_box(self):
+        """Initialise the receive code box."""
+        self.recv_box_id = "receiveBoxCodeEntry"
+        self.recv_box = self.builder.get_object(self.recv_box_id)
+        self.recv_box.connect("activate", self.on_recv)
+
     def on_drop(self, widget, drag_context, x, y, data, info, time):
+        """Handler for file dropping."""
         files = data.get_text().split()
         self.files_to_send = files
         if len(files) == 1:
@@ -99,6 +107,11 @@ class DropShip:
             self.drop_label.set_text("Sending..")
         else:
             log.info("Multiple file sending coming soon ™")
+
+    def on_recv(self, entry):
+        """Handler for receiving transfers."""
+        code = entry.get_text()
+        self.schedule(self.wormhole_recv(self, code))
 
     def on_quit(self, *args, **kwargs):
         """Quit the program."""
@@ -123,6 +136,7 @@ class DropShip:
         process = await asyncio.create_subprocess_exec(
             "wormhole",
             "send",
+            "--hide-progress",
             fpath,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
@@ -135,7 +149,6 @@ class DropShip:
         self._pending.append(PendingTransfer(code))
 
         await process.wait()
-
 
     async def wormhole_recv(self, widget, code):
         """Run `wormhole receive` with a pending transfer code."""
