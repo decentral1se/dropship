@@ -72,11 +72,10 @@ class DropShip:
 
     def init_drop_box(self):
         """Initialise the drag & drop box."""
-        # Initiate the drag and drop area
-        # https://python-gtk-3-tutorial.readthedocs.io/en/latest/drag_and_drop.html
         self.files_to_send = ""
 
-        # todo check the target flags, https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
+        # TODO(rra): check the target flags
+        # https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
         self.enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
 
         self.drop_box_id = "dropBox"
@@ -93,7 +92,6 @@ class DropShip:
         files = data.get_text().split()
         self.files_to_send = files
         if len(files) == 1:
-            # TODO(decentral1se): this replace seems funky!?
             fpath = Path(files[0].replace("file://", ""))
             self.schedule(self.wormhole_send(self, fpath))
             self.drop_label.set_text("Sending..")
@@ -103,9 +101,6 @@ class DropShip:
     def on_quit(self, *args, **kwargs):
         """Quit the program."""
         self.window.close()
-
-        # Note(decentral1se): this seems to be a hack but kinda works!?
-        # enabled by https://github.com/jhenstridge/asyncio-glib/pull/7
         self._running.set_result(None)
 
     def schedule(self, function):
