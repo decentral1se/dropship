@@ -1,3 +1,4 @@
 -e git+https://github.com/decentral1se/asyncio-glib#egg=asyncio-glib
 PyGObject==3.36.1
+PyInstaller==3.6
 magic-wormhole==0.12.0
