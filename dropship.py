@@ -144,6 +144,7 @@ class DropShip:
 
         line = await self.read_lines(process.stderr, "wormhole receive")
         code = line.split()[-1]
+        self.drop_label.set_selectable(True)
         self.drop_label.set_text(code)
 
         self._pending.append(PendingTransfer(code))
