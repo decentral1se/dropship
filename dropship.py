@@ -119,9 +119,10 @@ class DropShip:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
+
         line = await self.read_lines(process.stderr, "wormhole receive")
         code = line.split()[-1]
-        log.info(f"Wormhole send produced {code}")
+        self.drop_label.set_text(code)
 
         # TODO(decentral1se): waits forever...
         await process.wait()
