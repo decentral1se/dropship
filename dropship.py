@@ -101,14 +101,30 @@ class DropShip:
         """Schedule a task on the event loop."""
         loop.call_soon_threadsafe(asyncio.ensure_future, function)
 
+    async def read_lines(self, stream, pattern):
+        """Read stdout from a command and match lines."""
+        # TODO(decentral1se): if pattern doesnt match, trapped forever
+        while True:
+            line = await stream.readline()
+            decoded = line.decode("utf-8").strip()
+            if pattern in decoded:
+                return decoded
+
     async def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
         process = await asyncio.create_subprocess_exec(
-            "wormhole", "send", fpath, stdout=subprocess.PIPE
+            "wormhole",
+            "send",
+            fpath,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
+        line = await self.read_lines(process.stderr, "wormhole receive")
+        code = line.split()[-1]
+        log.info(f"Wormhole send produced f{code}")
 
-        async for line in process.stdout:
-            log.info(line)
+        # TODO(decentral1se): waits forever...
+        await process.wait()
 
 
 async def main():
