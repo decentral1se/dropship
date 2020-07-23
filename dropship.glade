@@ -30,6 +30,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Drag a file to send</property>
+                    <property name="selectable">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
