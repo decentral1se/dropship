@@ -50,8 +50,7 @@ class DropShip:
 
         self.init_glade()
         self.init_css()
-        self.init_drop_box()
-        self.init_recv_box()
+        self.init_ui_elements()
         self.init_window()
 
     def init_glade(self):
@@ -70,39 +69,42 @@ class DropShip:
         )
 
     def init_window(self):
-        """Initialise the GUI window."""
+        """Initialise the Main GUI window."""
         self.main_window_id = "mainWindow"
         self.window = self.builder.get_object(self.main_window_id)
         self.window.connect("delete-event", self.on_quit)
         self.window.show()
 
-    def init_drop_box(self):
-        """Initialise the drag & drop box."""
+    def init_ui_elements(self):
+        """Initialize the UI elements."""
+
+        # Send UI
+        # Drag & Drop Box
         self.files_to_send = ""
+        self.enforce_target = gtk.TargetEntry.new("text/uri-list", gtk.TargetFlags(4), 129)
 
-        # TODO(rra): check the target flags
-        # https://lazka.github.io/pgi-docs/Gtk-3.0/flags.html#Gtk.TargetFlags
-        self.enforce_target = gtk.TargetEntry.new("text/plain", gtk.TargetFlags(4), 129)
-
-        self.drop_box_id = "dropBox"
-        self.drop_box_label = "dropLabel"
-
-        self.drop_box = self.builder.get_object(self.drop_box_id)
+        self.drop_box = self.builder.get_object('dropBox')
         self.drop_box.drag_dest_set(
             gtk.DestDefaults.ALL, [self.enforce_target], gdk.DragAction.COPY
         )
         self.drop_box.connect("drag-data-received", self.on_drop)
-        self.drop_label = self.builder.get_object(self.drop_box_label)
+        self.drop_label = self.builder.get_object('dropLabel')
 
-    def init_recv_box(self):
-        """Initialise the receive code box."""
-        self.recv_box_id = "receiveBoxCodeEntry"
-        self.recv_box = self.builder.get_object(self.recv_box_id)
+        # File chooser
+        self.file_chooser = self.builder.get_object('filePicker')
+        self.file_chooser.add_buttons(
+            'Cancel', gtk.ResponseType.CANCEL, "Add", gtk.ResponseType.OK
+        )
+ 
+        # Receive UI
+        # Code entry box
+        self.recv_box = self.builder.get_object('receiveBoxCodeEntry')
         self.recv_box.connect("activate", self.on_recv)
+
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         """Handler for file dropping."""
-        files = data.get_text().split()
+        files = data.get_uris()
         self.files_to_send = files
         if len(files) == 1:
             fpath = Path(files[0].replace("file://", ""))
@@ -110,6 +112,16 @@ class DropShip:
             self.drop_label.set_text("Sending..")
         else:
             log.info("Multiple file sending coming soon ™")
+
+    def add_files(self,widget, event):
+        """Handler for adding files with system interface"""
+        response = self.file_chooser.run()
+        if response == gtk.ResponseType.OK:
+            self.schedule(self.wormhole_send(self, self.file_chooser.get_filenames()[0]))
+        elif response == gtk.ResponseType.CANCEL:
+            #TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
+            print("Cancel clicked")
+        self.file_chooser.destroy()
 
     def on_recv(self, entry):
         """Handler for receiving transfers."""
