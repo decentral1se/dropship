@@ -121,7 +121,7 @@ class DropShip:
         )
         line = await self.read_lines(process.stderr, "wormhole receive")
         code = line.split()[-1]
-        log.info(f"Wormhole send produced f{code}")
+        log.info(f"Wormhole send produced {code}")
 
         # TODO(decentral1se): waits forever...
         await process.wait()
