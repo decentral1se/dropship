@@ -23,6 +23,14 @@ log = logging.getLogger("dropship")
 loop = asyncio.get_event_loop()
 
 
+class PendingTransfer:
+    """A wormhole send waiting for a wormhole receive."""
+
+    def __init__(self, code):
+        """Object initialisation."""
+        self.code = code
+
+
 class DropShip:
     """Drag it, drop it, ship it."""
 
@@ -32,6 +40,7 @@ class DropShip:
         self.CSS_FILE = "dropship.css"
 
         self._running = loop.create_future()
+        self._pending = []
 
         self.init_glade()
         self.init_css()
@@ -124,6 +133,8 @@ class DropShip:
         line = await self.read_lines(process.stderr, "wormhole receive")
         code = line.split()[-1]
         self.drop_label.set_text(code)
+
+        self._pending.append(PendingTransfer(code))
 
         # TODO(decentral1se): waits forever...
         await process.wait()
