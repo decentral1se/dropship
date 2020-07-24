@@ -4,7 +4,7 @@
 
 lets try magic wormhole with a nice interface
 
-[![Screenshot of dropship interface](https://vvvvvvaria.org/~r/dropship.png)](https://vvvvvvaria.org/~r/dropship0.1.webm)
+![Screen cast of dropship interface](https://vvvvvvaria.org/~r/dropship0.1.gif)
 
 _(click for video)_
 
