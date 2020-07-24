@@ -25,3 +25,23 @@ _(click for video)_
 ## run:
 
 `python3 dropship.py`
+
+## operations:
+
+### github mirror:
+
+Add the following to the bottom of your `.git/config`.
+
+```
+[remote "all"]
+	url = ssh://gitea@vvvvvvaria.org:12345/rra/dropship.git
+	url = git@github.com:decentral1se/dropship.git
+```
+
+The `git push -u all main` will setup `git push` to automatically push to both remotes.
+
+### make a release:
+
+`git tag 0.0.1dev$whatever && git push`
+
+The [Travis CI configuration](https://git.vvvvvvaria.org/rra/dropship/src/branch/main/.travis.yml) will run [a build](https://travis-ci.org/github/decentral1se/dropship) and [publish binaries here](https://github.com/decentral1se/dropship/releases).
