@@ -107,7 +107,8 @@ class DropShip:
         files = data.get_uris()
         self.files_to_send = files
         if len(files) == 1:
-            fpath = Path(files[0].replace("file://", ""))
+            fpath = str(Path(files[0].replace("file://", "")))
+            print(fpath, type(fpath))
             self.schedule(self.wormhole_send(self, fpath))
             self.drop_label.set_text("Sending..")
         else:
