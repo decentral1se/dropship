@@ -34,8 +34,8 @@ Add the following to the bottom of your `.git/config`.
 
 ```
 [remote "all"]
-	url = ssh://gitea@vvvvvvaria.org:12345/rra/dropship.git
-	url = git@github.com:decentral1se/dropship.git
+  url = ssh://gitea@vvvvvvaria.org:12345/rra/dropship.git
+  url = git@github.com:decentral1se/dropship.git
 ```
 
 The `git push -u all main` will setup `git push` to automatically push to both remotes.
