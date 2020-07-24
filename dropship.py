@@ -78,6 +78,9 @@ class DropShip:
     def init_ui_elements(self):
         """Initialize the UI elements."""
 
+        # TODO (rra) find out how to use composite templates
+        # https://github.com/sebp/PyGObject-Tutorial/issues/149
+
         # Send UI
         # Drag & Drop Box
         self.files_to_send = ""
@@ -95,7 +98,7 @@ class DropShip:
         self.file_chooser.add_buttons(
             'Cancel', gtk.ResponseType.CANCEL, "Add", gtk.ResponseType.OK
         )
- 
+
         # Receive UI
         # Code entry box
         self.recv_box = self.builder.get_object('receiveBoxCodeEntry')
