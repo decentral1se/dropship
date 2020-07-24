@@ -92,6 +92,7 @@ class DropShip:
         )
         self.drop_box.connect("drag-data-received", self.on_drop)
         self.drop_label = self.builder.get_object('dropLabel')
+        self.drop_spinner = self.builder.get_object('dropSpinner')
 
         # File chooser
         self.file_chooser = self.builder.get_object('filePicker')
@@ -114,6 +115,8 @@ class DropShip:
             print(fpath, type(fpath))
             self.schedule(self.wormhole_send(self, fpath))
             self.drop_label.set_text("Sending..")
+            self.drop_spinner.start()
+
         else:
             log.info("Multiple file sending coming soon ™")
 
@@ -166,6 +169,7 @@ class DropShip:
 
         self.drop_label.set_selectable(True)
         self.drop_label.set_text(code)
+        self.drop_spinner.stop()
 
         self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
 

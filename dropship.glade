@@ -148,29 +148,39 @@
             <property name="can_focus">False</property>
             <signal name="button-press-event" handler="add_files" swapped="no"/>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="dragActionContainer">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="margin_left">16</property>
                 <property name="margin_right">16</property>
+                <property name="margin_start">16</property>
+                <property name="margin_end">16</property>
                 <property name="margin_top">16</property>
                 <property name="margin_bottom">16</property>
                 <property name="orientation">vertical</property>
-                <property name="homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="dropLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="valign">center</property>
                     <property name="label" translatable="yes">Drag a file to send</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkSpinner" id="dropSpinner">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
                 <style>
                   <class name="drop"/>
