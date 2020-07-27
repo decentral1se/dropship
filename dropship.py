@@ -108,13 +108,12 @@ class DropShip:
     def add_files(self, widget, event):
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
+
         if response == gtk.ResponseType.OK:
             fpath = self.file_chooser.get_filenames()[0]
             Thread(target=self.wormhole_send, args=(self, fpath,)).start()
-        elif response == gtk.ResponseType.CANCEL:
-            # TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
-            print("Cancel clicked")
-        self.file_chooser.destroy()
+
+        self.file_chooser.hide()
 
     def read_wormhole_send_code(self, process):
         """Read wormhole send code from command-line output."""
