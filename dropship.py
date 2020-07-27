@@ -1,13 +1,11 @@
 """Magic-Wormhole bundled up inside a PyGtk GUI."""
 
-import asyncio
 import logging
 import os
-import subprocess
 from pathlib import Path
 from signal import SIGINT, SIGTERM
+from subprocess import PIPE, Popen, TimeoutExpired
 
-import asyncio_glib
 import gi
 
 gi.require_version("Gtk", "3.0")
@@ -17,11 +15,9 @@ from gi.repository import Gdk as gdk
 from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
 
-asyncio.set_event_loop_policy(asyncio_glib.GLibEventLoopPolicy())
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 log = logging.getLogger("dropship")
-loop = asyncio.get_event_loop()
 
 AUTO_CLIP_COPY_SIZE = -1
 
@@ -29,10 +25,11 @@ AUTO_CLIP_COPY_SIZE = -1
 class PendingTransfer:
     """A wormhole send waiting for a wormhole receive."""
 
-    def __init__(self, code, fpath):
+    def __init__(self, code, fpath, process):
         """Object initialisation."""
         self.fpath = fpath
         self.code = code
+        self.process = process
 
 
 class DropShip:
@@ -46,7 +43,6 @@ class DropShip:
 
         self.clipboard = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
 
-        self._running = loop.create_future()
         self._pending = []
 
         self.init_glade()
@@ -73,7 +69,7 @@ class DropShip:
         """Initialise the Main GUI window."""
         self.main_window_id = "mainWindow"
         self.window = self.builder.get_object(self.main_window_id)
-        self.window.connect("delete-event", self.on_quit)
+        self.window.connect("delete-event", gtk.main_quit)
         self.window.show()
 
     def init_ui_elements(self):
@@ -115,7 +111,7 @@ class DropShip:
         if len(files) == 1:
             fpath = str(Path(files[0].replace("file://", "")))
             print(fpath, type(fpath))
-            self.schedule(self.wormhole_send(self, fpath))
+            self.wormhole_send(self, fpath)
             self.drop_label.set_text("Sending..")
             self.drop_spinner.start()
 
@@ -126,50 +122,28 @@ class DropShip:
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
         if response == gtk.ResponseType.OK:
-            self.schedule(
-                self.wormhole_send(self, self.file_chooser.get_filenames()[0])
-            )
+            self.wormhole_send(self, self.file_chooser.get_filenames()[0])
         elif response == gtk.ResponseType.CANCEL:
             # TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
             print("Cancel clicked")
         self.file_chooser.destroy()
 
+    def read_wormhole_send_code(self, process):
+        """Read wormhole send code from command-line output."""
+        process.stderr.readline()  # NOTE(decentral1se): skip first line
+        code_line = process.stderr.readline()
+        return code_line.split()[-1].decode("utf-8")
+
     def on_recv(self, entry):
         """Handler for receiving transfers."""
         code = entry.get_text()
-        self.schedule(self.wormhole_recv(self, code))
+        self.wormhole_recv(self, code)
 
-    def on_quit(self, *args, **kwargs):
-        """Quit the program."""
-        self.window.close()
-        self._running.set_result(None)
-
-    def schedule(self, function):
-        """Schedule a task on the event loop."""
-        loop.call_soon_threadsafe(asyncio.ensure_future, function)
-
-    async def read_lines(self, stream, pattern):
-        """Read stdout from a command and match lines."""
-        # TODO(decentral1se): if pattern doesnt match, trapped forever
-        while True:
-            line = await stream.readline()
-            decoded = line.decode("utf-8").strip()
-            if pattern in decoded:
-                return decoded
-
-    async def wormhole_send(self, widget, fpath):
+    def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
-        process = await asyncio.create_subprocess_exec(
-            "wormhole",
-            "send",
-            "--hide-progress",
-            fpath,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-
-        line = await self.read_lines(process.stderr, "wormhole receive")
-        code = line.split()[-1]
+        command = ["wormhole", "send", fpath]
+        process = Popen(command, stderr=PIPE)
+        code = self.read_wormhole_send_code(process)
 
         self.drop_label.set_selectable(True)
         self.drop_label.set_text(code)
@@ -177,38 +151,15 @@ class DropShip:
 
         self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
 
-        self._pending.append(PendingTransfer(code, fpath))
+        self._pending.append(PendingTransfer(code, fpath, process))
 
-        await process.wait()
-
-    async def wormhole_recv(self, widget, code):
+    def wormhole_recv(self, widget, code):
         """Run `wormhole receive` with a pending transfer code."""
-        process = await asyncio.create_subprocess_exec(
-            "wormhole",
-            "receive",
-            "--accept-file",
-            "--hide-progress",
-            code,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-        await process.wait()
-
-
-async def main():
-    """The application entrypoint."""
-    try:
-        dropship = DropShip()
-        await dropship._running
-    except asyncio.CancelledError:
-        pass
+        command = ["wormhole", "receive", "--accept-file", code]
+        process = Popen(command, stderr=PIPE)
+        process.communicate()
 
 
 if __name__ == "__main__":
-    try:
-        main_task = asyncio.ensure_future(main())
-        loop.add_signal_handler(SIGINT, main_task.cancel)
-        loop.add_signal_handler(SIGTERM, main_task.cancel)
-        loop.run_until_complete(main_task)
-    finally:
-        loop.close()
+    DropShip()
+    gtk.main()
