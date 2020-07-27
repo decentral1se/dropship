@@ -29,8 +29,9 @@ AUTO_CLIP_COPY_SIZE = -1
 class PendingTransfer:
     """A wormhole send waiting for a wormhole receive."""
 
-    def __init__(self, code):
+    def __init__(self, code, fpath):
         """Object initialisation."""
+        self.fpath = fpath
         self.code = code
 
 
@@ -176,7 +177,7 @@ class DropShip:
 
         self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
 
-        self._pending.append(PendingTransfer(code))
+        self._pending.append(PendingTransfer(code, fpath))
 
         await process.wait()
 
