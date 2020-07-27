@@ -84,27 +84,28 @@ class DropShip:
         # Send UI
         # Drag & Drop Box
         self.files_to_send = ""
-        self.enforce_target = gtk.TargetEntry.new("text/uri-list", gtk.TargetFlags(4), 129)
+        self.enforce_target = gtk.TargetEntry.new(
+            "text/uri-list", gtk.TargetFlags(4), 129
+        )
 
-        self.drop_box = self.builder.get_object('dropBox')
+        self.drop_box = self.builder.get_object("dropBox")
         self.drop_box.drag_dest_set(
             gtk.DestDefaults.ALL, [self.enforce_target], gdk.DragAction.COPY
         )
         self.drop_box.connect("drag-data-received", self.on_drop)
-        self.drop_label = self.builder.get_object('dropLabel')
-        self.drop_spinner = self.builder.get_object('dropSpinner')
+        self.drop_label = self.builder.get_object("dropLabel")
+        self.drop_spinner = self.builder.get_object("dropSpinner")
 
         # File chooser
-        self.file_chooser = self.builder.get_object('filePicker')
+        self.file_chooser = self.builder.get_object("filePicker")
         self.file_chooser.add_buttons(
-            'Cancel', gtk.ResponseType.CANCEL, "Add", gtk.ResponseType.OK
+            "Cancel", gtk.ResponseType.CANCEL, "Add", gtk.ResponseType.OK
         )
 
         # Receive UI
         # Code entry box
-        self.recv_box = self.builder.get_object('receiveBoxCodeEntry')
+        self.recv_box = self.builder.get_object("receiveBoxCodeEntry")
         self.recv_box.connect("activate", self.on_recv)
-
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         """Handler for file dropping."""
@@ -120,13 +121,15 @@ class DropShip:
         else:
             log.info("Multiple file sending coming soon ™")
 
-    def add_files(self,widget, event):
+    def add_files(self, widget, event):
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
         if response == gtk.ResponseType.OK:
-            self.schedule(self.wormhole_send(self, self.file_chooser.get_filenames()[0]))
+            self.schedule(
+                self.wormhole_send(self, self.file_chooser.get_filenames()[0])
+            )
         elif response == gtk.ResponseType.CANCEL:
-            #TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
+            # TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
             print("Cancel clicked")
         self.file_chooser.destroy()
 
