@@ -22,16 +22,6 @@ log = logging.getLogger("dropship")
 AUTO_CLIP_COPY_SIZE = -1
 
 
-class PendingTransfer:
-    """A wormhole send waiting for a wormhole receive."""
-
-    def __init__(self, code, fpath, process):
-        """Object initialisation."""
-        self.fpath = fpath
-        self.code = code
-        self.process = process
-
-
 class DropShip:
     """Drag it, drop it, ship it."""
 
@@ -42,8 +32,6 @@ class DropShip:
         self.DOWNLOAD_DIR = os.path.expanduser("~")
 
         self.clipboard = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
-
-        self._pending = []
 
         self.init_glade()
         self.init_css()
@@ -150,8 +138,6 @@ class DropShip:
         self.drop_spinner.stop()
 
         self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
-
-        self._pending.append(PendingTransfer(code, fpath, process))
 
     def wormhole_recv(self, widget, code):
         """Run `wormhole receive` with a pending transfer code."""
