@@ -2,7 +2,6 @@
 
 import logging
 import os
-from pathlib import Path
 from signal import SIGINT, SIGTERM
 from subprocess import PIPE, Popen, TimeoutExpired
 
@@ -109,8 +108,7 @@ class DropShip:
         files = data.get_uris()
         self.files_to_send = files
         if len(files) == 1:
-            fpath = str(Path(files[0].replace("file://", "")))
-            print(fpath, type(fpath))
+            fpath = files[0].replace("file://", "")
             self.wormhole_send(self, fpath)
             self.drop_label.set_text("Sending..")
             self.drop_spinner.start()
