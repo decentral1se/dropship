@@ -4,6 +4,7 @@ import logging
 import os
 from signal import SIGINT, SIGTERM
 from subprocess import PIPE, Popen, TimeoutExpired
+from threading import Thread
 
 import gi
 
@@ -109,7 +110,7 @@ class DropShip:
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
-            self.wormhole_send(self, fpath)
+            Thread(target=self.wormhole_send, args=(self, fpath,)).start()
             self.drop_label.set_text("Sending..")
             self.drop_spinner.start()
 
@@ -120,7 +121,8 @@ class DropShip:
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
         if response == gtk.ResponseType.OK:
-            self.wormhole_send(self, self.file_chooser.get_filenames()[0])
+            fpath = self.file_chooser.get_filenames()[0]
+            Thread(target=self.wormhole_send, args=(self, fpath,)).start()
         elif response == gtk.ResponseType.CANCEL:
             # TODO(roel) something isn't right here.. maybe we need to initialize it every time we run it.
             print("Cancel clicked")
@@ -135,7 +137,7 @@ class DropShip:
     def on_recv(self, entry):
         """Handler for receiving transfers."""
         code = entry.get_text()
-        self.wormhole_recv(self, code)
+        Thread(target=self.wormhole_recv, args=(self, code,)).start()
 
     def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
