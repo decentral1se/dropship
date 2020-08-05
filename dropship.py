@@ -99,7 +99,12 @@ class DropShip:
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
             Thread(target=self.wormhole_send, args=(self, fpath,)).start()
-            self.drop_label.set_text("Sending..")
+
+            # UI response
+            self.drop_label.set_visible(False)
+            self.drop_label.set_vexpand(False)
+            self.drop_spinner.set_vexpand(True)
+            self.drop_spinner.set_visible(True)
             self.drop_spinner.start()
 
         else:
@@ -130,7 +135,6 @@ class DropShip:
                     return code_line.split()[-1]
 
         
-
     def on_recv(self, entry):
         """Handler for receiving transfers."""
         code = entry.get_text()
@@ -142,9 +146,14 @@ class DropShip:
         process = Popen(command, stderr=PIPE, stdout=PIPE)
         code = self.read_wormhole_send_code(process)
 
+        # UI response
+        self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
         self.drop_label.set_text(code)
+        self.drop_label.set_vexpand(True)
         self.drop_spinner.stop()
+        self.drop_spinner.set_vexpand(False)
+        self.drop_spinner.set_visible(False)
 
         self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
 

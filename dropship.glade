@@ -173,7 +173,6 @@
                 </child>
                 <child>
                   <object class="GtkSpinner" id="dropSpinner">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                   </object>
                   <packing>
