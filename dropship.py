@@ -117,9 +117,19 @@ class DropShip:
 
     def read_wormhole_send_code(self, process):
         """Read wormhole send code from command-line output."""
-        process.stderr.readline()  # NOTE(decentral1se): skip first line
-        code_line = process.stderr.readline()
-        return code_line.split()[-1].decode("utf-8")
+
+        while True:
+            output = process.stderr.readline() # (rra) Why is it printing to stderr tho?
+            if output == '' and process.poll() is not None:
+                print(output)
+                return #(rra) We need some exception handling here
+            if output:
+                log.info(output)
+                if output.startswith(b'Wormhole code is: '):
+                    code_line = output.decode('utf-8')
+                    return code_line.split()[-1]
+
+        
 
     def on_recv(self, entry):
         """Handler for receiving transfers."""
@@ -129,7 +139,7 @@ class DropShip:
     def wormhole_send(self, widget, fpath):
         """Run `wormhole send` on a local file path."""
         command = ["wormhole", "send", fpath]
-        process = Popen(command, stderr=PIPE)
+        process = Popen(command, stderr=PIPE, stdout=PIPE)
         code = self.read_wormhole_send_code(process)
 
         self.drop_label.set_selectable(True)
