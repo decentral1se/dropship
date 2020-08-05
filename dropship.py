@@ -100,15 +100,18 @@ class DropShip:
             fpath = files[0].replace("file://", "")
             Thread(target=self.wormhole_send, args=(self, fpath,)).start()
 
-            # UI response
+            self.update_send_ui()
+
+        else:
+            log.info("Multiple file sending coming soon ™")
+    def update_send_ui (self):
+
+            # UI response after adding files
             self.drop_label.set_visible(False)
             self.drop_label.set_vexpand(False)
             self.drop_spinner.set_vexpand(True)
             self.drop_spinner.set_visible(True)
             self.drop_spinner.start()
-
-        else:
-            log.info("Multiple file sending coming soon ™")
 
     def add_files(self, widget, event):
         """Handler for adding files with system interface"""
@@ -117,6 +120,8 @@ class DropShip:
         if response == gtk.ResponseType.OK:
             fpath = self.file_chooser.get_filenames()[0]
             Thread(target=self.wormhole_send, args=(self, fpath,)).start()
+
+            self.update_send_ui()
 
         self.file_chooser.hide()
 
