@@ -104,14 +104,15 @@ class DropShip:
 
         else:
             log.info("Multiple file sending coming soon ™")
-    def update_send_ui (self):
 
-            # UI response after adding files
-            self.drop_label.set_visible(False)
-            self.drop_label.set_vexpand(False)
-            self.drop_spinner.set_vexpand(True)
-            self.drop_spinner.set_visible(True)
-            self.drop_spinner.start()
+    def update_send_ui(self):
+
+        # UI response after adding files
+        self.drop_label.set_visible(False)
+        self.drop_label.set_vexpand(False)
+        self.drop_spinner.set_vexpand(True)
+        self.drop_spinner.set_visible(True)
+        self.drop_spinner.start()
 
     def add_files(self, widget, event):
         """Handler for adding files with system interface"""
@@ -129,17 +130,18 @@ class DropShip:
         """Read wormhole send code from command-line output."""
 
         while True:
-            output = process.stderr.readline() # (rra) Why is it printing to stderr tho?
-            if output == '' and process.poll() is not None:
+            output = (
+                process.stderr.readline()
+            )  # (rra) Why is it printing to stderr tho?
+            if output == "" and process.poll() is not None:
                 print(output)
-                return #(rra) We need some exception handling here
+                return  # (rra) We need some exception handling here
             if output:
                 log.info(output)
-                if output.startswith(b'Wormhole code is: '):
-                    code_line = output.decode('utf-8')
+                if output.startswith(b"Wormhole code is: "):
+                    code_line = output.decode("utf-8")
                     return code_line.split()[-1]
 
-        
     def on_recv(self, entry):
         """Handler for receiving transfers."""
         code = entry.get_text()
