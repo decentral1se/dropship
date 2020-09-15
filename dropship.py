@@ -3,10 +3,10 @@
 import logging
 import os
 from signal import SIGINT, SIGTERM
-from subprocess import PIPE, Popen, TimeoutExpired
-from threading import Thread
+from subprocess import PIPE
 
 import gi
+import trio
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -25,13 +25,14 @@ AUTO_CLIP_COPY_SIZE = -1
 class DropShip:
     """Drag it, drop it, ship it."""
 
-    def __init__(self):
+    def __init__(self, nursery):
         """Object initialisation."""
         self.GLADE_FILE = "dropship.glade"
         self.CSS_FILE = "dropship.css"
         self.DOWNLOAD_DIR = os.path.expanduser("~")
 
         self.clipboard = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
+        self.nursery = nursery
 
         self.init_glade()
         self.init_css()
@@ -98,78 +99,78 @@ class DropShip:
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
-            Thread(target=self.wormhole_send, args=(self, fpath,)).start()
-
-            self.update_send_ui()
-
+            self.nursery.start_soon(self.wormhole_send, fpath)
         else:
             log.info("Multiple file sending coming soon ™")
 
-    def update_send_ui(self):
-        """Manage UI response after adding files."""
-        self.drop_label.set_visible(False)
-        self.drop_label.set_vexpand(False)
-        self.drop_spinner.set_vexpand(True)
-        self.drop_spinner.set_visible(True)
-        self.drop_spinner.start()
+    def on_recv(self, entry):
+        """Handler for receiving transfers."""
+        self.nursery.start_soon(self.wormhole_recv, entry.get_text())
 
     def add_files(self, widget, event):
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
-
         if response == gtk.ResponseType.OK:
             fpath = self.file_chooser.get_filenames()[0]
-            Thread(target=self.wormhole_send, args=(self, fpath,)).start()
-
-            self.update_send_ui()
-
+            self.nursery.start_soon(self.wormhole_send, fpath)
         self.file_chooser.hide()
 
-    def read_wormhole_send_code(self, process):
-        """Read wormhole send code from command-line output."""
-
-        while True:
-            output = (
-                process.stderr.readline()
-            )  # (rra) Why is it printing to stderr tho?
-            if output == "" and process.poll() is not None:
-                print(output)
-                return  # (rra) We need some exception handling here
-            if output:
-                log.info(output)
-                if output.startswith(b"Wormhole code is: "):
-                    code_line = output.decode("utf-8")
-                    return code_line.split()[-1]
-
-    def on_recv(self, entry):
-        """Handler for receiving transfers."""
-        code = entry.get_text()
-        Thread(target=self.wormhole_recv, args=(self, code,)).start()
-
-    def wormhole_send(self, widget, fpath):
+    async def wormhole_send(self, fpath):
         """Run `wormhole send` on a local file path."""
         command = ["wormhole", "send", fpath]
-        process = Popen(command, stderr=PIPE, stdout=PIPE)
-        code = self.read_wormhole_send_code(process)
+        process = await trio.open_process(command, stderr=PIPE)
 
-        # UI response
+        self.drop_label.set_visible(False)
+        self.drop_label.set_vexpand(False)
+
+        self.drop_spinner.set_vexpand(True)
+        self.drop_spinner.set_visible(True)
+        self.drop_spinner.start()
+
+        output = await process.stderr.receive_some()
+        code = output.decode().split()[-1]
+
+        self.drop_label.set_text(code)
         self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
-        self.drop_label.set_text(code)
-        self.drop_label.set_vexpand(True)
+
         self.drop_spinner.stop()
         self.drop_spinner.set_vexpand(False)
         self.drop_spinner.set_visible(False)
 
-        self.clipboard.set_text(code, AUTO_CLIP_COPY_SIZE)
+        await process.wait()
 
-    def wormhole_recv(self, widget, code):
+    async def wormhole_recv(self, code):
         """Run `wormhole receive` with a pending transfer code."""
         command = ["wormhole", "receive", "--accept-file", code]
-        process = Popen(command, stderr=PIPE)
-        process.communicate()
+        await trio.run_process(command, stderr=PIPE)
+
+
+def trio_run_with_gtk():
+    """Run Trio and Gtk together."""
+
+    async def trio_main():
+        """Trio main loop."""
+        async with trio.open_nursery() as nursery:
+            DropShip(nursery=nursery)
+            while True:
+                await trio.sleep(1)  # Note(decentral1se): replace this hack
+
+    def done_callback(outcome):
+        glib.idle_add(gtk.main_quit)
+
+    def glib_schedule(function):
+        glib.idle_add(function)
+
+    trio.lowlevel.start_guest_run(
+        trio_main,
+        run_sync_soon_threadsafe=glib_schedule,
+        done_callback=done_callback,
+        host_uses_signal_set_wakeup_fd=True,
+    )
+
+    gtk.main()
 
 
 if __name__ == "__main__":
-    DropShip()
-    gtk.main()
+    trio_run_with_gtk()
