@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/decentral1se/dropship.svg?branch=main)](https://travis-ci.org/decentral1se/dropship)
 
-lets try magic wormhole with a nice interface
+Lets try magic wormhole with a nice graphical interface.
 
 ![Screen cast of dropship interface](https://vvvvvvaria.org/~r/dropship0.1.gif)
 
