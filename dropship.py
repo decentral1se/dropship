@@ -106,8 +106,7 @@ class DropShip:
             log.info("Multiple file sending coming soon ™")
 
     def update_send_ui(self):
-
-        # UI response after adding files
+        """Manage UI response after adding files."""
         self.drop_label.set_visible(False)
         self.drop_label.set_vexpand(False)
         self.drop_spinner.set_vexpand(True)
