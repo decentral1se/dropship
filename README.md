@@ -24,6 +24,22 @@ _(click for video)_
 
 `python3 dropship.py`
 
+## development notes:
+
+### How we handle asynchronous actions
+
+We use the [Trio guest
+mode](https://trio.readthedocs.io/en/latest/reference-lowlevel.html#using-guest-mode-to-run-trio-on-top-of-other-event-loops)
+instead of relying on threads because those are hard to manage. Running two
+loops (Gtk and Trio) has disadvantages but overall, it offers a very clear way
+of organising and executing asynchronous operations.
+
+In practice, this means you need to arrange the following:
+
+1. Wire up your usual hook (`self.drop_box.connect("drag-data-received", self.on_drop)`)
+2. In your hook function, call your asynchronous function via the `self.nursery.start_soon` API
+3. Define your asynchronous function with `async def` and use the `await` keyword as usual
+
 ## operations:
 
 ### github mirror:
