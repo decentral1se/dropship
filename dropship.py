@@ -2,11 +2,12 @@
 
 import logging
 import os
-from signal import SIGINT, SIGTERM
+from signal import SIGINT
 from subprocess import PIPE
 
 import gi
 import trio
+import trio_gtk
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -18,8 +19,6 @@ from gi.repository import Gtk as gtk
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 log = logging.getLogger("dropship")
-
-AUTO_CLIP_COPY_SIZE = -1
 
 
 class DropShip:
@@ -146,31 +145,9 @@ class DropShip:
         await trio.run_process(command, stderr=PIPE)
 
 
-def trio_run_with_gtk():
-    """Run Trio and Gtk together."""
-
-    async def trio_main():
-        """Trio main loop."""
-        async with trio.open_nursery() as nursery:
-            DropShip(nursery=nursery)
-            while True:
-                await trio.sleep(1)  # Note(decentral1se): replace this hack
-
-    def done_callback(outcome):
-        glib.idle_add(gtk.main_quit)
-
-    def glib_schedule(function):
-        glib.idle_add(function)
-
-    trio.lowlevel.start_guest_run(
-        trio_main,
-        run_sync_soon_threadsafe=glib_schedule,
-        done_callback=done_callback,
-        host_uses_signal_set_wakeup_fd=True,
-    )
-
-    gtk.main()
+async def main(nursery):
+    """Trio main entrypoint."""
+    DropShip(nursery=nursery)
 
 
-if __name__ == "__main__":
-    trio_run_with_gtk()
+trio_gtk.run(main)
