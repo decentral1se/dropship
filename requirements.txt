@@ -1,5 +1,5 @@
 PyGObject==3.38.0
 PyInstaller==3.6
 magic-wormhole==0.12.0
-trio-gtk==0.1.1
+trio-gtk==1.0.0
 trio==0.17.0

@@ -145,9 +145,11 @@ class DropShip:
         await trio.run_process(command, stderr=PIPE)
 
 
-async def main(nursery):
+async def main():
     """Trio main entrypoint."""
-    DropShip(nursery=nursery)
+    async with trio.open_nursery() as nursery:
+        DropShip(nursery)
+        await trio.sleep_forever()
 
 
 trio_gtk.run(main)
