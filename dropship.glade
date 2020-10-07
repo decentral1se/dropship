@@ -1,143 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.36.0 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-no</property>
-    <property name="icon_size">3</property>
-  </object>
-  <object class="GtkWindow" id="PendingTransmission">
-    <property name="name">pendingTransmission</property>
-    <property name="can_focus">False</property>
-    <property name="decorated">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_left">6</property>
-        <property name="margin_right">6</property>
-        <child>
-          <object class="GtkImage">
-            <property name="width_request">50</property>
-            <property name="height_request">50</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stock">gtk-network</property>
-            <property name="icon_size">6</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
-            <property name="margin_top">6</property>
-            <property name="margin_bottom">6</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkLabel" id="fileNameLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">screenshot_01-292.jpg</property>
-                    <property name="ellipsize">end</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                      <attribute name="scale" value="1.2"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="fileNameMetadata">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">336 KB</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="transmissionCodeButton">
-                <property name="label" translatable="yes">5-courier-happening</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="halign">center</property>
-                <property name="margin_top">6</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="cancelTransmission">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="halign">center</property>
-            <property name="valign">center</property>
-            <property name="margin_left">16</property>
-            <property name="margin_right">16</property>
-            <property name="margin_top">16</property>
-            <property name="margin_bottom">16</property>
-            <property name="image">image1</property>
-            <style>
-              <class name="circular"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-  </object>
   <object class="GtkApplicationWindow" id="mainWindow">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
     <property name="default_width">250</property>
     <property name="default_height">250</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="stack">sendReceiveStack</property>
+          </object>
+        </child>
+      </object>
+    </child>
     <child>
       <object class="GtkStack" id="sendReceiveStack">
         <property name="visible">True</property>
@@ -247,21 +131,6 @@
         </child>
       </object>
     </child>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="show_close_button">True</property>
-        <child>
-          <object class="GtkStackSwitcher">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="stack">sendReceiveStack</property>
-          </object>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkFileChooserDialog" id="filePicker">
     <property name="can_focus">False</property>
@@ -270,6 +139,9 @@
     <property name="transient_for">mainWindow</property>
     <property name="has_resize_grip">True</property>
     <property name="select_multiple">True</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -296,9 +168,6 @@
           <placeholder/>
         </child>
       </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
     </child>
   </object>
 </interface>
