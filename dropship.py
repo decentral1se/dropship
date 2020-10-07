@@ -92,13 +92,20 @@ class DropShip:
         self.recv_box = self.builder.get_object("receiveBoxCodeEntry")
         self.recv_box.connect("activate", self.on_recv)
 
+        # Pending Transmissions UI
+        self.pending_box = self.builder.get_object("pendingBox")
+        self.transfer_code = ''
+
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         """Handler for file dropping."""
         files = data.get_uris()
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
+            status = pendingTransmissions(fpath, self.transfer_code)
+            self.pending_box.add(status, True, True, 0)
             self.nursery.start_soon(self.wormhole_send, fpath)
+
         else:
             log.info("Multiple file sending coming soon ™")
 
@@ -127,9 +134,9 @@ class DropShip:
         self.drop_spinner.start()
 
         output = await process.stderr.receive_some()
-        code = output.decode().split()[-1]
+        self.transfer_code = output.decode().split()[-1]
 
-        self.drop_label.set_text(code)
+        self.drop_label.set_text(self.transfer_code)
         self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
 
@@ -144,6 +151,23 @@ class DropShip:
         command = ["wormhole", "receive", "--accept-file", code]
         await trio.run_process(command, stderr=PIPE)
 
+@gtk.Template.from_file('pendingTransmissions.ui')
+class pendingTransmissions(gtk.Box):
+    __gtype_name__ = 'PendingTransmission'
+
+
+fileNameLabel           = gtk.Template.Child('fileNameLabel')
+fileNameMetadata        = gtk.Template.Child('fileNameMetadata')
+transmissionCodeButton  = gtk.Template.Child('transmissionCodeButton')
+cancelTransmission      = gtk.Template.Child('cancelTransmission')
+
+def __init__(self, widget, fileName, transferCode):
+    super(Gtk.Box, self).__init__()
+
+    self.init_template()
+
+    self.fileNameLabel.set_text(fileName)
+    self.transmissionCodeButton.set_label(transferCode)
 
 async def main():
     """Trio main entrypoint."""
