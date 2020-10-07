@@ -34,6 +34,17 @@ We use [trio-gtk](https://github.com/decentral1se/trio-gtk). In practice, this m
 2. In your hook function, call your asynchronous function via the `self.nursery.start_soon` API
 3. Define your asynchronous function with `async def` and use the `await` keyword as usual
 
+### References in the Wild West
+
+There isn't much but there is stuff out there!
+
+- https://github.com/exaile/exaile
+- https://github.com/virtuald/pygi-composite-templates
+- https://github.com/sharkwouter/minigalaxy
+- https://developer.puri.sm/Librem5/Apps/Gnome.html
+
+Also try the `#glade` channel on the Gnome IRC.
+
 ## operations:
 
 ### github mirror:
