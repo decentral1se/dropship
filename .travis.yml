@@ -15,14 +15,10 @@ addons:
       - upx-ucl
 
 install:
-  - pip install -r requirements.txt
+  - echo "TODO"
 
 script:
-  - |
-    pyinstaller \
-    --add-data "dropship.glade:." \
-    --add-data "dropship.css:." \
-    --onefile dropship.py
+  - echo "TODO"
 
 deploy:
   provider: releases

@@ -1,24 +1,16 @@
-"""Magic-Wormhole bundled up inside a PyGtk GUI."""
-
-import logging
-import os
-from signal import SIGINT
+from pathlib import Path
 from subprocess import PIPE
 
-import gi
-import trio
-import trio_gtk
+from gi import require_version
+from trio import open_process, run_process
 
-gi.require_version("Gtk", "3.0")
-gi.require_version("Gdk", "3.0")
+from dropship import log
+
+require_version("Gtk", "3.0")
+require_version("Gdk", "3.0")
 
 from gi.repository import Gdk as gdk
-from gi.repository import GLib as glib
 from gi.repository import Gtk as gtk
-
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-
-log = logging.getLogger("dropship")
 
 
 class DropShip:
@@ -26,9 +18,9 @@ class DropShip:
 
     def __init__(self, nursery):
         """Object initialisation."""
-        self.GLADE_FILE = "dropship.glade"
-        self.CSS_FILE = "dropship.css"
-        self.DOWNLOAD_DIR = os.path.expanduser("~")
+        self.CWD = Path(__file__).absolute().parent
+        self.GLADE_FILE = f"{self.CWD}/ui/dropship.ui"
+        self.CSS_FILE = f"{self.CWD}/ui/dropship.css"
 
         self.clipboard = gtk.Clipboard.get(gdk.SELECTION_CLIPBOARD)
         self.nursery = nursery
@@ -117,7 +109,7 @@ class DropShip:
     async def wormhole_send(self, fpath):
         """Run `wormhole send` on a local file path."""
         command = ["wormhole", "send", fpath]
-        process = await trio.open_process(command, stderr=PIPE)
+        process = await open_process(command, stderr=PIPE)
 
         self.drop_label.set_visible(False)
         self.drop_label.set_vexpand(False)
@@ -142,14 +134,4 @@ class DropShip:
     async def wormhole_recv(self, code):
         """Run `wormhole receive` with a pending transfer code."""
         command = ["wormhole", "receive", "--accept-file", code]
-        await trio.run_process(command, stderr=PIPE)
-
-
-async def main():
-    """Trio main entrypoint."""
-    async with trio.open_nursery() as nursery:
-        DropShip(nursery)
-        await trio.sleep_forever()
-
-
-trio_gtk.run(main)
+        await run_process(command, stderr=PIPE)
