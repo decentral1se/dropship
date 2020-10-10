@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkApplicationWindow" id="mainWindow">
@@ -7,21 +7,6 @@
     <property name="resizable">False</property>
     <property name="default_width">250</property>
     <property name="default_height">250</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="show_close_button">True</property>
-        <child>
-          <object class="GtkStackSwitcher">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="stack">sendReceiveStack</property>
-          </object>
-        </child>
-      </object>
-    </child>
     <child>
       <object class="GtkStack" id="sendReceiveStack">
         <property name="visible">True</property>
@@ -114,8 +99,8 @@
           <object class="GtkBox" id="pendingBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">16</property>
-            <property name="margin_right">16</property>
+            <property name="margin_start">16</property>
+            <property name="margin_end">16</property>
             <property name="margin_top">16</property>
             <property name="margin_bottom">16</property>
             <property name="orientation">vertical</property>
@@ -131,6 +116,21 @@
         </child>
       </object>
     </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="show_close_button">True</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="stack">sendReceiveStack</property>
+          </object>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkFileChooserDialog" id="filePicker">
     <property name="can_focus">False</property>
@@ -139,9 +139,6 @@
     <property name="transient_for">mainWindow</property>
     <property name="has_resize_grip">True</property>
     <property name="select_multiple">True</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -168,6 +165,9 @@
           <placeholder/>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
 </interface>
