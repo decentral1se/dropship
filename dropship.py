@@ -16,7 +16,7 @@ from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import Gtk
 
-from ui_templates import pendingTransmissions
+from ui_templates import pendingTransferRow
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
@@ -91,8 +91,8 @@ class DropShip:
         self.recv_box = self.builder.get_object("receiveBoxCodeEntry")
         self.recv_box.connect("activate", self.on_recv)
 
-        # Pending Transmissions UI
-        self.pending_box = self.builder.get_object("pendingBox")
+        # Pending Transfers UI
+        self.pending_transfers_list = self.builder.get_object("pendingTransfersList")
         self.transfer_code = ''
 
 
@@ -106,8 +106,8 @@ class DropShip:
             self.nursery.start_soon(self.wormhole_send, fpath)
 
             # TODO Roel/Luke, move this somewhere logical in its own function?
-            status = pendingTransmissions(self, fpath.split('/')[-1], self.transfer_code)
-            self.pending_box.add(status)
+            status = pendingTransferRow(self, fpath.split('/')[-1], self.transfer_code)
+            self.pending_transfers_list.add(status)
 
         else:
             log.info("Multiple file sending coming soon ™")
