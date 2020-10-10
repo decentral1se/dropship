@@ -17,9 +17,8 @@ class pendingTransmissions(Gtk.Box):
         # This must occur *after* you initialize your base
         self.init_template()
         #TODO (Roel)
-        self.fileNameLabel.set_ellipsize(2)  
-        self.fileNameLabel.set_text(fileName)
 
+        self.fileNameLabel.set_text(fileName)
         self.transmissionCodeButton.set_label(transferCode)
 
     @Gtk.Template.Callback()
@@ -29,6 +28,10 @@ class pendingTransmissions(Gtk.Box):
         copy the code again to clipboard
         '''
         print('click')
+        code = widget.get_label()
+
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(code, -1) #-1 is auto-size
 
     @Gtk.Template.Callback()
     def cancel_transfer(self,widget):

@@ -138,6 +138,8 @@ class DropShip:
 
         output = await process.stderr.receive_some()
         code = output.decode().split()[-1]
+
+        self.clipboard.set_text(code, -1)
         self.transfer_code = code  
 
         self.drop_label.set_text(code)
