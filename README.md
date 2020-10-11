@@ -20,15 +20,7 @@ See our [wiki](https://git.vvvvvvaria.org/rra/dropship/wiki).
 
 ### Install for Hacking
 
-You'll need to install [pygobject](https://pygobject.readthedocs.io/) and system dependencies first.
-
-It is recommended to do this through your system package manager. For a Debian based system, you would run the following:
-
-```bash
-$ sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
-```
-
-Then, you can install `dropship` using [poetry](https://python-poetry.org/docs/#installation):
+Install [poetry](https://python-poetry.org/docs/#installation) and then install the package locally.
 
 ```
 $ poetry install
