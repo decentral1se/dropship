@@ -1,3 +1,4 @@
+from os.path import basename
 from pathlib import Path
 from subprocess import PIPE
 
@@ -95,13 +96,13 @@ class DropShip:
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
+            fname = basename(fpath)
             # TODO Luke can u make a callback that spawns pendingTransmissions after we got a code?
             self.nursery.start_soon(self.wormhole_send, fpath)
 
             # TODO Roel/Luke, move this somewhere logical in its own function?
-            status = pendingTransferRow(
-                self, fpath.split("/")[-1], self.transfer_code
-            )
+            status = pendingTransferRow(self, fname, self.transfer_code)
+
             # TODO Roel, find out how to add to a listbox
             self.pending_transfers_list.insert(
                 status, -1
