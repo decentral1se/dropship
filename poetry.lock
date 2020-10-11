@@ -423,13 +423,15 @@ sortedcontainers = "*"
 
 [[package]]
 name = "trio-gtk"
-version = "2.0.0"
+version = "3.0.0"
 description = "Trio guest mode wrapper for PyGTK"
 category = "main"
 optional = false
 python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
+pycairo = "<1.20"
+pygobject = "<3.32"
 trio = ">=0.17.0,<0.18.0"
 
 [[package]]
@@ -524,7 +526,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "61efde8611b77ff97874030e649afa7e8c08f55226ebc75181a744678d9c21d8"
+content-hash = "0a715ca1d9895ea425e19009507c250732d00057e74e97436a9e8ac928f57140"
 
 [metadata.files]
 appdirs = [
@@ -786,8 +788,8 @@ trio = [
     {file = "trio-0.17.0.tar.gz", hash = "sha256:e85cf9858e445465dfbb0e3fdf36efe92082d2df87bfe9d62585eedd6e8e9d7d"},
 ]
 trio-gtk = [
-    {file = "trio-gtk-2.0.0.tar.gz", hash = "sha256:8edf901f1d118d5414f71eb4495a4023aab827e22bf85df02a24398565d87e76"},
-    {file = "trio_gtk-2.0.0-py3-none-any.whl", hash = "sha256:cb448783bf3c11d7e7771a4e85618f4227e3e247df49dbabef5f0211d2a57561"},
+    {file = "trio-gtk-3.0.0.tar.gz", hash = "sha256:e462512596b3d023b3f093497fc433f67957816284f7761bd6324930472ed4d3"},
+    {file = "trio_gtk-3.0.0-py3-none-any.whl", hash = "sha256:bc101157af1f4b60db580930c31b58dec6fcaa58c69e3b26ed5e3b01edac4926"},
 ]
 twisted = [
     {file = "Twisted-20.3.0-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:cdbc4c7f0cd7a2218b575844e970f05a1be1861c607b0e048c9bceca0c4d42f7"},
