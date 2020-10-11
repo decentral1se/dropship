@@ -142,9 +142,8 @@ class DropShip:
 
     async def wormhole_send(self, fpath):
         """Run `wormhole send` on a local file path."""
-        command = ["wormhole", "send", fpath]
-        process = await open_process(command, stderr=PIPE)
         self._send_spinner_on()
+        process = await open_process(["wormhole", "send", fpath], stderr=PIPE)
         output = await process.stderr.receive_some()
         self.transfer_code = output.decode().split()[-1]
         self.clipboard.set_text(self.transfer_code, -1)
