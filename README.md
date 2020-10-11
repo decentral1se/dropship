@@ -32,6 +32,14 @@ $ poetry install
 $ poetry run dropship
 ```
 
+### Updating dependencies
+
+- Change the bounds/versions/etc. in the [pyproject.toml](./pyproject.toml)
+- Run `poetry update`
+- Commit and push your changes
+
+The [poetry.lock](./poetry.lock) file helps us all get the same dependencies.
+
 ### Adding a Github Mirror
 
 We use a Github mirror so we can have a [gratis automated release build](./.travis.yml).
