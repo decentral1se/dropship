@@ -1,10 +1,15 @@
+from pathlib import Path
+
 import gi
 
 gi.require_version("Gtk", "3.0")
+
 from gi.repository import Gdk, GLib, Gtk
 
+CWD = Path(__file__).absolute().parent
 
-@Gtk.Template.from_file("pendingTransferRow.ui")
+
+@Gtk.Template.from_file(f"{CWD}/ui/pendingTransferRow.ui")
 class pendingTransferRow(Gtk.ListBoxRow):
     __gtype_name__ = "PendingTransferRow"
 

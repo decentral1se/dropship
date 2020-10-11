@@ -11,7 +11,9 @@ require_version("Gdk", "3.0")
 
 from gi.repository import Gdk, GLib, Gtk
 
-from dropship.templates import pendingTransferRow
+from dropship.ui_templates import pendingTransferRow
+
+CWD = Path(__file__).absolute().parent
 
 
 class DropShip:
@@ -19,9 +21,8 @@ class DropShip:
 
     def __init__(self, nursery):
         """Object initialisation."""
-        self.CWD = Path(__file__).absolute().parent
-        self.GLADE_FILE = f"{self.CWD}/ui/dropship.ui"
-        self.CSS_FILE = f"{self.CWD}/ui/dropship.css"
+        self.GLADE_FILE = f"{CWD}/ui/dropship.ui"
+        self.CSS_FILE = f"{CWD}/ui/dropship.css"
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.nursery = nursery
