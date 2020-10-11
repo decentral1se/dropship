@@ -11,7 +11,7 @@ authors = [
 python = "^3.6"
 magic-wormhole = "^0.12.0"
 pycairo = "< 1.20"  # Note(decentral1se): https://gitlab.gnome.org/GNOME/pygobject/-/issues/395#note_929699
-pygobject = "<3.32"  # Note(decentral1se): related to ^^^, we need an old pygobject that accepts an old pycairo
+pygobject = "< 3.32"  # Note(decentral1se): related to ^^^, we need an old pygobject that accepts an old pycairo
 trio = "^0.17.0"
 trio-gtk = "^2.0.0"
 
