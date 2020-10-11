@@ -9,9 +9,7 @@ from dropship import log
 require_version("Gtk", "3.0")
 require_version("Gdk", "3.0")
 
-from gi.repository import Gdk
-from gi.repository import GLib
-from gi.repository import Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 from dropship.templates import pendingTransferRow
 
@@ -85,9 +83,10 @@ class DropShip:
         self.recv_box.connect("activate", self.on_recv)
 
         # Pending Transfers UI
-        self.pending_transfers_list = self.builder.get_object("pendingTransfersList")
-        self.transfer_code = ''
-
+        self.pending_transfers_list = self.builder.get_object(
+            "pendingTransfersList"
+        )
+        self.transfer_code = ""
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         """Handler for file dropping."""
@@ -99,9 +98,13 @@ class DropShip:
             self.nursery.start_soon(self.wormhole_send, fpath)
 
             # TODO Roel/Luke, move this somewhere logical in its own function?
-            status = pendingTransferRow(self, fpath.split('/')[-1], self.transfer_code)
+            status = pendingTransferRow(
+                self, fpath.split("/")[-1], self.transfer_code
+            )
             # TODO Roel, find out how to add to a listbox
-            self.pending_transfers_list.insert(status,-1) #-1 is add at bottom
+            self.pending_transfers_list.insert(
+                status, -1
+            )  # -1 is add at bottom
 
         else:
             log.info("Multiple file sending coming soon ™")
@@ -134,7 +137,7 @@ class DropShip:
         code = output.decode().split()[-1]
 
         self.clipboard.set_text(code, -1)
-        self.transfer_code = code  
+        self.transfer_code = code
 
         self.drop_label.set_text(code)
         self.drop_label.set_visible(True)
