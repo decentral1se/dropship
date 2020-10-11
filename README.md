@@ -14,6 +14,10 @@ _(click for video)_
 
 ## Develop
 
+### Documentation
+
+See our [wiki](https://git.vvvvvvaria.org/rra/dropship/wiki).
+
 ### Install for Hacking
 
 You'll need to install [pygobject](https://pygobject.readthedocs.io/) and system dependencies first.
@@ -58,14 +62,3 @@ $ git push
 ```
 
 The [Travis CI configuration](./.travis.yml) will run [a build](https://travis-ci.org/github/decentral1se/dropship) and [publish binaries here](https://github.com/decentral1se/dropship/releases).
-
-## Documentation from the Wild West
-
-There isn't much but there is stuff out there!
-
-- https://github.com/exaile/exaile
-- https://github.com/virtuald/pygi-composite-templates
-- https://github.com/sharkwouter/minigalaxy
-- https://developer.puri.sm/Librem5/Apps/Gnome.html
-
-Also try the `#glade` channel on the Gnome IRC.
