@@ -96,18 +96,7 @@ class DropShip:
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
-            fname = basename(fpath)
-            # TODO Luke can u make a callback that spawns pendingTransmissions after we got a code?
             self.nursery.start_soon(self.wormhole_send, fpath)
-
-            # TODO Roel/Luke, move this somewhere logical in its own function?
-            status = PendingTransferRow(self, fname, self.transfer_code)
-
-            # TODO Roel, find out how to add to a listbox
-            self.pending_transfers_list.insert(
-                status, -1
-            )  # -1 is add at bottom
-
         else:
             log.info("Multiple file sending coming soon ™")
 
@@ -140,12 +129,18 @@ class DropShip:
         self.drop_spinner.set_vexpand(False)
         self.drop_spinner.set_visible(False)
 
+    def _create_pending_transfer(self, fpath):
+        """Create a new pending transfer."""
+        pending = PendingTransferRow(basename(fpath), self.transfer_code)
+        self.pending_transfers_list.insert(pending, -1)
+
     async def wormhole_send(self, fpath):
         """Run `wormhole send` on a local file path."""
         self._send_spinner_on()
         process = await open_process(["wormhole", "send", fpath], stderr=PIPE)
         output = await process.stderr.receive_some()
         self.transfer_code = output.decode().split()[-1]
+        self._create_pending_transfer(fpath)
         self.clipboard.set_text(self.transfer_code, -1)
         self._send_spinner_off()
         await process.wait()

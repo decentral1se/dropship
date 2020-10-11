@@ -18,7 +18,7 @@ class PendingTransferRow(Gtk.ListBoxRow):
     transferCodeButton = Gtk.Template.Child()
     cancelTransfer = Gtk.Template.Child()
 
-    def __init__(self, parent, fileName, transferCode):
+    def __init__(self, fileName, transferCode):
         super(PendingTransferRow, self).__init__()
         self.fileNameLabel.set_text(fileName)
         self.transferCodeButton.set_label(transferCode)
