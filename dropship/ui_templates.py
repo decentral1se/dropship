@@ -20,8 +20,6 @@ class pendingTransferRow(Gtk.ListBoxRow):
 
     def __init__(self, parent, fileName, transferCode):
         super(Gtk.ListBoxRow, self).__init__()
-        self.init_template()
-
         self.fileNameLabel.set_text(fileName)
         self.transferCodeButton.set_label(transferCode)
 
