@@ -131,9 +131,9 @@ class DropShip:
         self.drop_spinner.set_visible(True)
         self.drop_spinner.start()
 
-    def _send_spinner_off(self, code):
+    def _send_spinner_off(self):
         """Turn spinner off for sending interaction."""
-        self.drop_label.set_text(code)
+        self.drop_label.set_text(self.transfer_code)
         self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
         self.drop_spinner.stop()
@@ -148,7 +148,7 @@ class DropShip:
         output = await process.stderr.receive_some()
         self.transfer_code = output.decode().split()[-1]
         self.clipboard.set_text(self.transfer_code, -1)
-        self._send_spinner_off(self.transfer_code)
+        self._send_spinner_off()
         await process.wait()
 
     async def wormhole_recv(self, code):
