@@ -10,7 +10,7 @@ CWD = Path(__file__).absolute().parent
 
 
 @Gtk.Template.from_file(f"{CWD}/ui/pendingTransferRow.ui")
-class pendingTransferRow(Gtk.ListBoxRow):
+class PendingTransferRow(Gtk.ListBoxRow):
     __gtype_name__ = "PendingTransferRow"
 
     fileNameLabel = Gtk.Template.Child()
@@ -19,7 +19,7 @@ class pendingTransferRow(Gtk.ListBoxRow):
     cancelTransfer = Gtk.Template.Child()
 
     def __init__(self, parent, fileName, transferCode):
-        super(Gtk.ListBoxRow, self).__init__()
+        super(PendingTransferRow, self).__init__()
         self.fileNameLabel.set_text(fileName)
         self.transferCodeButton.set_label(transferCode)
 

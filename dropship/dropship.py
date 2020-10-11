@@ -12,7 +12,7 @@ require_version("Gdk", "3.0")
 
 from gi.repository import Gdk, GLib, Gtk
 
-from dropship.ui_templates import pendingTransferRow
+from dropship.ui_templates import PendingTransferRow
 
 CWD = Path(__file__).absolute().parent
 
@@ -101,7 +101,7 @@ class DropShip:
             self.nursery.start_soon(self.wormhole_send, fpath)
 
             # TODO Roel/Luke, move this somewhere logical in its own function?
-            status = pendingTransferRow(self, fname, self.transfer_code)
+            status = PendingTransferRow(self, fname, self.transfer_code)
 
             # TODO Roel, find out how to add to a listbox
             self.pending_transfers_list.insert(
