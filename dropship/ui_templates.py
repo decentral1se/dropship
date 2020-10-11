@@ -11,7 +11,8 @@ CWD = Path(__file__).absolute().parent
 
 @Gtk.Template.from_file(f"{CWD}/ui/pendingTransferRow.ui")
 class PendingTransferRow(Gtk.ListBoxRow):
-    __gtype_name__ = "PendingTransferRow"
+    # Note(decentral1se): must match ui/pendingTransferRow.ui name
+    __gtype_name__ = "pendingTransferRow"
 
     fileNameLabel = Gtk.Template.Child()
     fileNameMetadata = Gtk.Template.Child()
