@@ -13,7 +13,7 @@ from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import Gtk
 
-from ui_templates import pendingTransferRow
+from dropship.templates import pendingTransferRow
 
 
 class DropShip:
