@@ -107,7 +107,8 @@ class DropShip:
 
             # TODO Roel/Luke, move this somewhere logical in its own function?
             status = pendingTransferRow(self, fpath.split('/')[-1], self.transfer_code)
-            self.pending_transfers_list.add(status)
+            # TODO Roel, find out how to add to a listbox
+            self.pending_transfers_list.insert(status,-1) #-1 is add at bottom
 
         else:
             log.info("Multiple file sending coming soon ™")

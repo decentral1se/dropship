@@ -16,7 +16,7 @@ class pendingTransferRow(Gtk.ListBoxRow):
         self.init_template()
 
         self.fileNameLabel.set_text(fileName)
-        self.transmissionCodeButton.set_label(transferCode)
+        self.transferCodeButton.set_label(transferCode)
 
     @Gtk.Template.Callback()
     def copy_transfer_code(self,widget):
