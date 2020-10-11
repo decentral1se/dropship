@@ -1,4 +1,4 @@
-# dropship
+# Dropship
 
 [![Build Status](https://travis-ci.org/decentral1se/dropship.svg?branch=main)](https://travis-ci.org/decentral1se/dropship)
 
@@ -8,46 +8,37 @@ Lets try magic wormhole with a nice graphical interface.
 
 _(click for video)_
 
-## what is what:
+## Install
 
-- `dropship.py`, run this with python3.
-- `dropship.glade`, UI file, edit with glade.
-- `dropship.css`, additional styling for UI.
+> Coming Soon™
 
-## install:
+## Develop
 
-`sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0`
+### Install for Hacking
 
-`pip install -r requirments.txt`
+You'll need to install [pygobject](https://pygobject.readthedocs.io/) and system dependencies first.
 
-## run:
+It is recommended to do this through your system package manager. For a Debian based system, you would run the following:
 
-`python3 dropship.py`
+```bash
+$ sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0
+```
 
-## development notes:
+Then, you can install `dropship` using [poetry](https://python-poetry.org/docs/#installation):
 
-### How we handle asynchronous actions
+```
+$ poetry install
+```
 
-We use [trio-gtk](https://github.com/decentral1se/trio-gtk). In practice, this means you need to arrange the following:
+### Run in Hackity Hack Hack Mode
 
-1. Wire up your usual hook (`self.drop_box.connect("drag-data-received", self.on_drop)`)
-2. In your hook function, call your asynchronous function via the `self.nursery.start_soon` API
-3. Define your asynchronous function with `async def` and use the `await` keyword as usual
+```bash
+$ poetry run dropship
+```
 
-### References in the Wild West
+### Adding a Github Mirror
 
-There isn't much but there is stuff out there!
-
-- https://github.com/exaile/exaile
-- https://github.com/virtuald/pygi-composite-templates
-- https://github.com/sharkwouter/minigalaxy
-- https://developer.puri.sm/Librem5/Apps/Gnome.html
-
-Also try the `#glade` channel on the Gnome IRC.
-
-## operations:
-
-### github mirror:
+We use a Github mirror so we can have a [gratis automated release build](./.travis.yml).
 
 Add the following to the bottom of your `.git/config`.
 
@@ -59,8 +50,22 @@ Add the following to the bottom of your `.git/config`.
 
 The `git push -u all main` will setup `git push` to automatically push to both remotes.
 
-### make a release:
+### Make a new Release
 
-`git tag 0.0.1dev$whatever && git push`
+```bash
+$ git tag $mytag  # follow semver.org please
+$ git push
+```
 
-The [Travis CI configuration](https://git.vvvvvvaria.org/rra/dropship/src/branch/main/.travis.yml) will run [a build](https://travis-ci.org/github/decentral1se/dropship) and [publish binaries here](https://github.com/decentral1se/dropship/releases).
+The [Travis CI configuration](./.travis.yml) will run [a build](https://travis-ci.org/github/decentral1se/dropship) and [publish binaries here](https://github.com/decentral1se/dropship/releases).
+
+## Documentation from the Wild West
+
+There isn't much but there is stuff out there!
+
+- https://github.com/exaile/exaile
+- https://github.com/virtuald/pygi-composite-templates
+- https://github.com/sharkwouter/minigalaxy
+- https://developer.puri.sm/Librem5/Apps/Gnome.html
+
+Also try the `#glade` channel on the Gnome IRC.
