@@ -88,7 +88,6 @@ class DropShip:
         self.pending_transfers_list = self.builder.get_object(
             "pendingTransfersList"
         )
-        self.transfer_code = ""
 
     def on_drop(self, widget, drag_context, x, y, data, info, time):
         """Handler for file dropping."""
@@ -120,18 +119,18 @@ class DropShip:
         self.drop_spinner.set_visible(True)
         self.drop_spinner.start()
 
-    def _send_spinner_off(self):
+    def _send_spinner_off(self, code):
         """Turn spinner off for sending interaction."""
-        self.drop_label.set_text(self.transfer_code)
+        self.drop_label.set_text(code)
         self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
         self.drop_spinner.stop()
         self.drop_spinner.set_vexpand(False)
         self.drop_spinner.set_visible(False)
 
-    def _create_pending_transfer(self, fpath):
+    def _create_pending_transfer(self, fpath, code):
         """Create a new pending transfer."""
-        pending = PendingTransferRow(basename(fpath), self.transfer_code)
+        pending = PendingTransferRow(basename(fpath), code)
         self.pending_transfers_list.insert(pending, -1)
 
     async def wormhole_send(self, fpath):
@@ -139,10 +138,10 @@ class DropShip:
         self._send_spinner_on()
         process = await open_process(["wormhole", "send", fpath], stderr=PIPE)
         output = await process.stderr.receive_some()
-        self.transfer_code = output.decode().split()[-1]
-        self._create_pending_transfer(fpath)
-        self.clipboard.set_text(self.transfer_code, -1)
-        self._send_spinner_off()
+        code = output.decode().split()[-1]
+        self._create_pending_transfer(fpath, code)
+        self.clipboard.set_text(code, -1)
+        self._send_spinner_off(code)
         await process.wait()
 
     async def wormhole_recv(self, code):
