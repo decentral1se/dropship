@@ -122,32 +122,32 @@ class DropShip:
             self.nursery.start_soon(self.wormhole_send, fpath)
         self.file_chooser.hide()
 
-    async def wormhole_send(self, fpath):
-        """Run `wormhole send` on a local file path."""
-        command = ["wormhole", "send", fpath]
-        process = await open_process(command, stderr=PIPE)
-
+    def _send_spinner_on(self):
+        """Turn spinner on for sending interaction."""
         self.drop_label.set_visible(False)
         self.drop_label.set_vexpand(False)
-
         self.drop_spinner.set_vexpand(True)
         self.drop_spinner.set_visible(True)
         self.drop_spinner.start()
 
-        output = await process.stderr.receive_some()
-        code = output.decode().split()[-1]
-
-        self.clipboard.set_text(code, -1)
-        self.transfer_code = code
-
+    def _send_spinner_off(self, code):
+        """Turn spinner off for sending interaction."""
         self.drop_label.set_text(code)
         self.drop_label.set_visible(True)
         self.drop_label.set_selectable(True)
-
         self.drop_spinner.stop()
         self.drop_spinner.set_vexpand(False)
         self.drop_spinner.set_visible(False)
 
+    async def wormhole_send(self, fpath):
+        """Run `wormhole send` on a local file path."""
+        command = ["wormhole", "send", fpath]
+        process = await open_process(command, stderr=PIPE)
+        self._send_spinner_on()
+        output = await process.stderr.receive_some()
+        self.transfer_code = output.decode().split()[-1]
+        self.clipboard.set_text(self.transfer_code, -1)
+        self._send_spinner_off(self.transfer_code)
         await process.wait()
 
     async def wormhole_recv(self, code):
