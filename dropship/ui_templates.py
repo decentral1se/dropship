@@ -20,7 +20,7 @@ class PendingTransferRow(Gtk.ListBoxRow):
     cancelTransfer = Gtk.Template.Child()
 
     def __init__(self, fileName, transferCode, *args, **kwargs):
-        super(PendingTransferRow, self).__init__(*args, **kwargs)
+        Gtk.ListBoxRow.__init__(self, *args, **kwargs)
         self.fileNameLabel.set_text(fileName)
         self.transferCodeButton.set_label(transferCode)
 
