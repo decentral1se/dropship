@@ -24,7 +24,7 @@ class PendingTransferRow(Gtk.ListBoxRow):
         self.fileNameLabel.set_text(fileName)
         self.transferCodeButton.set_label(transferCode)
 
-    @Gtk.Template.Callback()
+    @Gtk.Template.Callback("copy_transfer_code")
     def copy_transfer_code(self, widget):
         """
         what to do when we press the button:
@@ -36,7 +36,7 @@ class PendingTransferRow(Gtk.ListBoxRow):
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(code, -1)  # -1 is auto-size
 
-    @Gtk.Template.Callback()
+    @Gtk.Template.Callback("cancel_transfer")
     def cancel_transfer(self, widget):
         """
         cancel the transfer
