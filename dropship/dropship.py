@@ -1,9 +1,8 @@
 from os.path import basename
 from pathlib import Path
-from subprocess import PIPE
 
 from gi import require_version
-from trio import open_process, run_process
+from trio import CancelScope, open_process, run_process
 
 from dropship import log
 
@@ -12,9 +11,11 @@ require_version("Gdk", "3.0")
 
 from gi.repository import Gdk, GLib, Gtk
 
+from dropship import log
+from dropship.constant import UI_DIR
+from dropship.transfer import PendingTransfer
 from dropship.ui_templates import PendingTransferRow
-
-CWD = Path(__file__).absolute().parent
+from dropship.wormhole import wormhole_recv, wormhole_send
 
 
 class DropShip:
@@ -22,8 +23,8 @@ class DropShip:
 
     def __init__(self, nursery):
         """Object initialisation."""
-        self.GLADE_FILE = f"{CWD}/ui/dropship.ui"
-        self.CSS_FILE = f"{CWD}/ui/dropship.css"
+        self.GLADE_FILE = f"{UI_DIR}/dropship.ui"
+        self.CSS_FILE = f"{UI_DIR}/dropship.css"
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.nursery = nursery
@@ -95,20 +96,20 @@ class DropShip:
         self.files_to_send = files
         if len(files) == 1:
             fpath = files[0].replace("file://", "")
-            self.nursery.start_soon(self.wormhole_send, fpath)
+            self.nursery.start_soon(self.send, fpath)
         else:
             log.info("Multiple file sending coming soon ™")
 
     def on_recv(self, entry):
         """Handler for receiving transfers."""
-        self.nursery.start_soon(self.wormhole_recv, entry.get_text())
+        self.nursery.start_soon(self.receive, entry.get_text())
 
     def add_files(self, widget, event):
         """Handler for adding files with system interface"""
         response = self.file_chooser.run()
         if response == Gtk.ResponseType.OK:
             fpath = self.file_chooser.get_filenames()[0]
-            self.nursery.start_soon(self.wormhole_send, fpath)
+            self.nursery.start_soon(self.send, fpath)
         self.file_chooser.hide()
 
     def _send_spinner_on(self):
@@ -128,23 +129,27 @@ class DropShip:
         self.drop_spinner.set_vexpand(False)
         self.drop_spinner.set_visible(False)
 
-    def _create_pending_transfer(self, fpath, code):
+    def _create_pending_transfer(self, fpath, code, scope):
         """Create a new pending transfer."""
-        pending = PendingTransferRow(basename(fpath), code)
-        self.pending_transfers_list.insert(pending, -1)
+        transfer = PendingTransfer(fpath, code, scope)
+        template = PendingTransferRow(transfer, self)
+        self.pending_transfers_list.insert(template, -1)
 
-    async def wormhole_send(self, fpath):
-        """Run `wormhole send` on a local file path."""
+    def _remove_pending_transfer(self, code):
+        """Remove pending transfer."""
+        for pending_transfer in self.pending_transfers_list:
+            if pending_transfer.code == code:
+                pending_transfer.cancel()
+
+    async def send(self, fpath):
         self._send_spinner_on()
-        process = await open_process(["wormhole", "send", fpath], stderr=PIPE)
-        output = await process.stderr.receive_some()
-        code = output.decode().split()[-1]
-        self._create_pending_transfer(fpath, code)
+        code, scope = await self.nursery.start(wormhole_send, fpath)
+        self._create_pending_transfer(fpath, code, scope)
         self.clipboard.set_text(code, -1)
         self._send_spinner_off(code)
-        await process.wait()
+        log.info(f"send: successfully initiated transfer send ({code})")
 
-    async def wormhole_recv(self, code):
-        """Run `wormhole receive` with a pending transfer code."""
-        command = ["wormhole", "receive", "--accept-file", code]
-        await run_process(command, stderr=PIPE)
+    async def receive(self, code):
+        await self.nursery.start(wormhole_recv, code)
+        self._remove_pending_transfer(code)
+        log.info(f"receive: successfully received transfer ({code})")
