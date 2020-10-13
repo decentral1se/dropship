@@ -22,7 +22,7 @@ async def wormhole_send(fpath, task_status=TASK_STATUS_IGNORED):
         log.info(f"wormhole_send: succesfully terminated process ({code})")
 
 
-async def wormhole_recv(code, task_status=TASK_STATUS_IGNORED):
+async def wormhole_recv(code, parent, task_status=TASK_STATUS_IGNORED):
     """Run `wormhole receive` on a pending transfer code."""
     with CancelScope() as scope:
         command = ["wormhole", "receive", "--accept-file", code]
@@ -30,6 +30,7 @@ async def wormhole_recv(code, task_status=TASK_STATUS_IGNORED):
         task_status.started((scope,))
         log.info(f"wormhole_recv: now starting receiving process ({code})")
         await process.wait()
+        parent._remove_pending_transfer(code)
         log.info(f"wormhole_recv: succesfully received ({code})")
 
     if scope.cancel_called:

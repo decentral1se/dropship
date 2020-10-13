@@ -150,6 +150,5 @@ class DropShip:
         log.info(f"send: successfully initiated transfer send ({code})")
 
     async def receive(self, code):
-        await self.nursery.start(wormhole_recv, code)
-        self._remove_pending_transfer(code)
-        log.info(f"receive: successfully received transfer ({code})")
+        await self.nursery.start(wormhole_recv, code, self)
+        log.info(f"send: successfully initiated receive ({code})")
