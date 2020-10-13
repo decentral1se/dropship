@@ -143,7 +143,7 @@ class DropShip:
 
     async def send(self, fpath):
         self._send_spinner_on()
-        code, scope = await self.nursery.start(wormhole_send, fpath)
+        code, scope = await self.nursery.start(wormhole_send, fpath, self)
         self._create_pending_transfer(fpath, code, scope)
         self.clipboard.set_text(code, -1)
         self._send_spinner_off(code)

@@ -5,7 +5,7 @@ from trio import TASK_STATUS_IGNORED, CancelScope, open_process, run_process
 from dropship import log
 
 
-async def wormhole_send(fpath, task_status=TASK_STATUS_IGNORED):
+async def wormhole_send(fpath, parent, task_status=TASK_STATUS_IGNORED):
     """Run `wormhole send` on a local file path."""
     with CancelScope() as scope:
         command = ["wormhole", "send", fpath]
@@ -20,6 +20,8 @@ async def wormhole_send(fpath, task_status=TASK_STATUS_IGNORED):
     if scope.cancel_called:
         process.terminate()
         log.info(f"wormhole_send: succesfully terminated process ({code})")
+
+    parent._remove_pending_transfer(code)
 
 
 async def wormhole_recv(code, parent, task_status=TASK_STATUS_IGNORED):
