@@ -56,6 +56,8 @@ The `git push -u all main` will setup `git push` to automatically push to both r
 
 ### Make a new Release
 
+> Publishing binaries is disabled until we make further progress on [#3](https://git.vvvvvvaria.org/rra/dropship/issues/3)
+
 ```bash
 $ git tag $mytag  # follow semver.org please
 $ git push
