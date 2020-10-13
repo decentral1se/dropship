@@ -1,11 +1,16 @@
 [tool.poetry]
 name = "dropship"
-version = "0.0.3"
+version = "0.0.5"
 description = "Magic wormhole with a nice graphical interface"
 authors = [
   "decentral1se <hi@decentral1.se>",
   "rra <roel@roelroscamabbing.nl>",
 ]
+license = "GPLv3"
+readme = "README.md"
+repository = "https://git.vvvvvvaria.org/rra/dropship"
+keywords = ["magic-wormhole", "gtk", "pygobject"]
+include = ["CHANGELOG.md", "LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
