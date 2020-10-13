@@ -30,9 +30,10 @@ async def wormhole_recv(code, parent, task_status=TASK_STATUS_IGNORED):
         task_status.started((scope,))
         log.info(f"wormhole_recv: now starting receiving process ({code})")
         await process.wait()
-        parent._remove_pending_transfer(code)
         log.info(f"wormhole_recv: succesfully received ({code})")
 
     if scope.cancel_called:
         process.terminate()
         log.info(f"wormhole_recv: succesfully terminated process ({code})")
+
+    parent._remove_pending_transfer(code)
